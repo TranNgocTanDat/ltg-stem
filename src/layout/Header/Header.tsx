@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ble } from "../../bluetooth/bleManager";
 import { Button } from "@/components/ui/button"
 import { Bluetooth } from "lucide-react";
+import logo from "@/assets/logoltg.png";
 
 
 const Header = () => {
@@ -24,10 +25,14 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full h-16 bg-gray-800 text-white flex items-center px-4">
+    <header className="w-full h-16 bg-[oklch(96.2%_0.044_156.743)] text-white flex items-center px-4">
       <div className="header-content flex justify-between w-full">
         <div className="header-logo w-[50%]" >
-
+          <img
+            src={logo}
+            alt="Logo"
+            className="h-10 w-auto object-contain"
+          />
         </div>
         <div className="header-function w-[50%] flex justify-start gap-2">
           <div className="ble">
@@ -37,7 +42,7 @@ const Header = () => {
 
               </>
             ) : (
-              <Button variant="outline" onClick={disconnectBLE} className="bg-red-500"><Bluetooth /></Button>
+              <Button variant="outline" onClick={disconnectBLE} className="bg-blue-500"><Bluetooth /></Button>
             )}
           </div>
         </div>
