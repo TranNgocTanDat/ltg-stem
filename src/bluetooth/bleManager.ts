@@ -20,6 +20,17 @@ class BleManager {
 
   /* ================= CONNECT ================= */
 
+   async setRealtimeMode() {
+    await this.send({
+      cmd: "set_mode",
+      args: {
+        mode: "realtime",
+      },
+    });
+
+    console.log("⚡ BLE mode = REALTIME");
+  }
+
   async connect() {
     this.device = await navigator.bluetooth.requestDevice({
       filters: [{ namePrefix: "ESP32" }],
@@ -39,6 +50,7 @@ class BleManager {
     );
 
     console.log("✅ BLE connected");
+    await this.setRealtimeMode();
   }
 
   disconnect() {
