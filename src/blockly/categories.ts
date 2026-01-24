@@ -1,15 +1,11 @@
-// src/blockly/categories.ts
-// src/blockly/categories.ts
 import type { FlyoutItem } from "./blocklyTypes";
 
-export type Category = {
+export const CATEGORIES: {
   id: string;
   name: string;
   color: string;
   contents: FlyoutItem[];
-};
-
-export const CATEGORIES: Category[] = [
+}[] = [
   {
     id: "basic",
     name: "CƠ BẢN",

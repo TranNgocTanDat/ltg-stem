@@ -1,12 +1,11 @@
-// src/blockly/Sidebar.tsx
 import { CATEGORIES } from "./categories";
-import type { Category } from "./categories";
 
 type Props = {
-  onSelect: (contents: Category["contents"]) => void;
+  onSelect: (categoryId: string) => void;
+  activeCategory?: string | null;
 };
 
-export default function Sidebar({ onSelect }: Props) {
+export default function Sidebar({ onSelect, activeCategory }: Props) {
   return (
     <div
       style={{
@@ -19,12 +18,12 @@ export default function Sidebar({ onSelect }: Props) {
         gap: 8,
       }}
     >
-      {CATEGORIES.map((cat) => (
+      {CATEGORIES.map(cat => (
         <button
           key={cat.id}
-          onClick={() => onSelect(cat.contents)}
+          onClick={() => onSelect(cat.id)}
           style={{
-            background: cat.color,
+            background: activeCategory === cat.id ? "#111" : cat.color,
             color: "#fff",
             border: "none",
             borderRadius: 10,

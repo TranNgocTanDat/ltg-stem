@@ -121,3 +121,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* 🔥 DIỆT FLYOUT SCROLLBAR (SVG) */
+.blocklyFlyoutScrollbar,
+.blocklyFlyout .blocklyScrollbarVertical,
+.blocklyFlyout .blocklyScrollbarHorizontal {
+  display: none !important;
+}
+
+/* DIỆT CẢ NỀN THANH XÁM */
+.blocklyFlyoutBackground {
+  stroke-width: 0 !important;
+}

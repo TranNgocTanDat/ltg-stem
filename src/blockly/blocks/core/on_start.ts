@@ -3,13 +3,12 @@ import * as Blockly from "blockly";
 Blockly.Blocks["on_start"] = {
   init() {
     this.appendDummyInput()
-      .appendField("🟢 Bắt đầu");
+      .appendField("Khởi động chương trình");
 
-    this.appendStatementInput("DO")
-      .appendField("thực hiện");
+    this.appendStatementInput("DO");  
 
     this.setColour(120);
-    this.setDeletable(false);
+    this.setDeletable(true);
     this.setMovable(true);
   },
 };
