@@ -25,7 +25,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full h-16 bg-green-100 text-white flex items-center px-4">
+    <header className="w-full h-16 bg-green-100 text-black flex items-center px-4">
       <div className="header-content flex justify-between w-full">
         <div className="header-logo w-[50%]" >
           <img
@@ -38,7 +38,7 @@ const Header = () => {
           <div className="ble">
             {!bleConnected ? (
               <>
-                <Button variant="outline" onClick={connectBLE}><Bluetooth /></Button>
+                <Button variant="outline" onClick={connectBLE}><Bluetooth  /></Button>
 
               </>
             ) : (

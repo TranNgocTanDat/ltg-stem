@@ -16,6 +16,21 @@ import { javascriptGenerator } from "blockly/javascript";
 import { Button } from "@/components/ui/button";
 
 import { runProgram, stopProgram } from "@/blockly/runtime/runner";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
+
+import {
+  createProject,
+  updateProject,
+  loadProject,
+  getProjects,
+  getActiveProjectId,
+} from "@/blockly/projects";
+
 
 export default function BlocklyEditor() {
   const blocklyDiv = useRef<HTMLDivElement | null>(null);
@@ -23,6 +38,12 @@ export default function BlocklyEditor() {
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const activeCategoryRef = useRef<string | null>(null);
+
+  const [projects, setProjects] = useState(getProjects());
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+
+  const [openProjects, setOpenProjects] = useState(false);
+
 
   // ===== FLYOUT UTILS =====
   const getFlyout = (workspace: Blockly.WorkspaceSvg) =>
@@ -105,7 +126,22 @@ export default function BlocklyEditor() {
       },
     });
 
+    const activeId = getActiveProjectId();
+    if (activeId) {
+      loadProject(activeId, workspace);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setActiveProjectId(activeId);
+    }
+
+
     workspaceRef.current = workspace;
+
+    workspace.addChangeListener(e => {
+      if (e.isUiEvent) return;
+      if (!activeProjectId) return;
+
+      updateProject(activeProjectId, workspace);
+    });
 
     // 🔥 VARIABLES AUTO-REFRESH
     workspace.addChangeListener(e => {
@@ -148,6 +184,8 @@ export default function BlocklyEditor() {
         );
       }
     });
+
+
 
 
     hideFlyout(workspace);
@@ -236,6 +274,52 @@ export default function BlocklyEditor() {
             gap: 8,
           }}
         >
+          <Button
+            onClick={() => {
+              const name = prompt("Nhập tên project:");
+              if (!name) return;
+
+              const p = createProject(name, workspaceRef.current!);
+              setActiveProjectId(p.id);
+              setProjects(getProjects());
+            }}
+          >
+            💾 Lưu project
+          </Button>
+          <Popover open={openProjects} onOpenChange={setOpenProjects}>
+            <PopoverTrigger asChild>
+              <Button variant="outline">
+                📁 Projects
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent className="w-56 p-2">
+              {projects.length === 0 && (
+                <div className="text-xs text-muted-foreground">
+                  Chưa có project nào
+                </div>
+              )}
+
+              <div className="flex flex-col gap-1">
+                {projects.map(p => (
+                  <Button
+                    key={p.id}
+                    variant={p.id === activeProjectId ? "default" : "secondary"}
+                    className="justify-start"
+                    onClick={() => {
+                      loadProject(p.id, workspaceRef.current!);
+                      setActiveProjectId(p.id);
+                      setOpenProjects(false); // 👈 đóng popover
+                    }}
+                  >
+                    {p.name}
+                  </Button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+
           <Button
             onClick={() =>
               alert(pythonGenerator.workspaceToCode(workspaceRef.current!))
