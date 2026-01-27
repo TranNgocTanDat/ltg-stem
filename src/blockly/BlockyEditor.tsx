@@ -20,7 +20,9 @@ import { runProgram, stopProgram } from "@/blockly/runtime/runner";
 export default function BlocklyEditor() {
   const blocklyDiv = useRef<HTMLDivElement | null>(null);
   const workspaceRef = useRef<Blockly.WorkspaceSvg | null>(null);
+
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const activeCategoryRef = useRef<string | null>(null);
 
   // ===== FLYOUT UTILS =====
   const getFlyout = (workspace: Blockly.WorkspaceSvg) =>
@@ -31,15 +33,10 @@ export default function BlocklyEditor() {
     const flyout = getFlyout(workspace);
     if (!flyout) return;
 
-    // 1️⃣ Ẩn SVG flyout hoàn toàn
     if (flyout.svgGroup_) {
       flyout.svgGroup_.style.display = "none";
     }
-
-    // 2️⃣ Tắt scrollbar logic (phòng trường hợp render lại)
     flyout.scrollbar_?.setVisible(false);
-
-    // 3️⃣ Resize workspace để KHÔNG chừa chỗ
     Blockly.svgResize(workspace);
   };
 
@@ -50,49 +47,23 @@ export default function BlocklyEditor() {
     if (flyout.svgGroup_) {
       flyout.svgGroup_.style.display = "block";
     }
-
     flyout.scrollbar_?.setVisible(false);
     Blockly.svgResize(workspace);
   };
 
-  // ===== INIT WORKSPACE =====
-  useEffect(() => {
-    if (!blocklyDiv.current) return;
-    if (workspaceRef.current) return;
+  // ===== UPDATE FLYOUT =====
+  const updateFlyout = (
+    toolbox: Blockly.utils.toolbox.ToolboxDefinition,
+    show: boolean
+  ) => {
+    const workspace = workspaceRef.current;
+    if (!workspace) return;
 
-    Blockly.setLocale(vi as unknown as Record<string, string>);
+    workspace.updateToolbox(toolbox);
 
-    const workspace = Blockly.inject(blocklyDiv.current, {
-      renderer: "geras",
-      theme: makeCodeTheme,
-      trashcan: true,
-      toolbox: EMPTY_TOOLBOX, // ❗ BẮT BUỘC
-      move: {
-        scrollbars: true,
-        drag: true,
-        wheel: true,
-      },
-      zoom: {
-        controls: true,
-        wheel: true,
-      },
-    });
-
-    workspaceRef.current = workspace;
-
-    // ❗ KHÔNG MỞ CATEGORY → ẨN FLYOUT NGAY
-    hideFlyout(workspace);
-
-    // eslint-disable-next-line react-hooks/immutability
-    createDefaultStart(workspace);
-    // eslint-disable-next-line react-hooks/immutability
-    createDefaultForever(workspace);
-
-    return () => {
-      workspace.dispose();
-      workspaceRef.current = null;
-    };
-  }, []);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    show ? showFlyout(workspace) : hideFlyout(workspace);
+  };
 
   // ===== DEFAULT BLOCKS =====
   const createDefaultStart = (workspace: Blockly.WorkspaceSvg) => {
@@ -108,38 +79,134 @@ export default function BlocklyEditor() {
     const block = workspace.newBlock("forever");
     block.initSvg();
     block.render();
-    block.moveBy(200, 200);
+    block.moveBy(300, 200);
   };
 
-  // ===== UPDATE FLYOUT =====
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateFlyout = (toolbox: any, show: boolean) => {
-    const workspace = workspaceRef.current;
-    if (!workspace) return;
+  // ===== INIT WORKSPACE =====
+  useEffect(() => {
+    if (!blocklyDiv.current) return;
+    if (workspaceRef.current) return;
 
-    workspace.updateToolbox(toolbox);
+    Blockly.setLocale(vi as unknown as Record<string, string>);
 
-    if (show) {
-      showFlyout(workspace);
-    } else {
-      hideFlyout(workspace);
-    }
-  };
+    const workspace = Blockly.inject(blocklyDiv.current, {
+      renderer: "custom_renderer",
+      theme: makeCodeTheme,
+      trashcan: true,
+      toolbox: EMPTY_TOOLBOX,
+      move: {
+        scrollbars: true,
+        drag: true,
+        wheel: true,
+      },
+      zoom: {
+        controls: true,
+        wheel: true,
+      },
+    });
+
+    workspaceRef.current = workspace;
+
+    // 🔥 VARIABLES AUTO-REFRESH
+    workspace.addChangeListener(e => {
+      if (activeCategoryRef.current !== "variables") return;
+
+      if (
+        e.type === Blockly.Events.VAR_CREATE ||
+        e.type === Blockly.Events.VAR_DELETE ||
+        e.type === Blockly.Events.VAR_RENAME
+      ) {
+        const contents = Blockly.Variables.flyoutCategory(workspace, false);
+
+        updateFlyout(
+          {
+            kind: "flyoutToolbox",
+            contents,
+          },
+          true
+        );
+      }
+    });
+
+    workspace.addChangeListener(e => {
+      if (!workspaceRef.current) return;
+      if (activeCategory !== "functions") return;
+
+      if (
+        e.type === Blockly.Events.BLOCK_CREATE ||
+        e.type === Blockly.Events.BLOCK_DELETE ||
+        e.type === Blockly.Events.BLOCK_CHANGE
+      ) {
+        const contents = Blockly.Procedures.flyoutCategory(workspace, false);
+
+        updateFlyout(
+          {
+            kind: "flyoutToolbox",
+            contents,
+          },
+          true
+        );
+      }
+    });
+
+
+    hideFlyout(workspace);
+    createDefaultStart(workspace);
+    createDefaultForever(workspace);
+
+    return () => {
+      workspace.dispose();
+      workspaceRef.current = null;
+    };
+  }, []);
 
   // ===== CATEGORY HANDLER =====
+  const setActive = (id: string | null) => {
+    activeCategoryRef.current = id;
+    setActiveCategory(id);
+  };
+
   const handleSelectCategory = (id: string) => {
     const workspace = workspaceRef.current;
     if (!workspace) return;
 
-    // ĐÓNG CATEGORY
-    if (activeCategory === id) {
-      setActiveCategory(null);
+    // toggle off
+    if (activeCategoryRef.current === id) {
+      setActive(null);
       updateFlyout(EMPTY_TOOLBOX, false);
       return;
     }
 
-    // MỞ CATEGORY
-    setActiveCategory(id);
+    setActive(id);
+
+    // ⭐ VARIABLES
+    if (id === "variables") {
+      const contents = Blockly.Variables.flyoutCategory(workspace, false);
+
+      updateFlyout(
+        {
+          kind: "flyoutToolbox",
+          contents,
+        },
+        true
+      );
+      return;
+    }
+
+    if (id === "functions") {
+      const contents = Blockly.Procedures.flyoutCategory(workspace, false);
+
+      updateFlyout(
+        {
+          kind: "flyoutToolbox",
+          contents,
+        },
+        true
+      );
+      return;
+    }
+
+
     const category = CATEGORIES.find(c => c.id === id);
     if (!category) return;
 

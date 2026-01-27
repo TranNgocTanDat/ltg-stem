@@ -10,3 +10,6 @@ import "./blocks/rgbLed";
 import "./generators/javascript/core";
 import "./generators/javascript/device";
 import "./generators/python";
+
+import "./renderer";
+

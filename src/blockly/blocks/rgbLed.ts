@@ -38,6 +38,7 @@ Blockly.Blocks["rgb_led_set"] = {
           ["🟣 Tím", "PURPLE"],
           ["🔵 Cyan", "CYAN"],
           ["⚪ Trắng", "WHITE"],
+          ["⚫ Tắt", "OFF"],
         ]),
         "COLOR",
       );

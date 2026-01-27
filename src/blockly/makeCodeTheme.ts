@@ -2,21 +2,27 @@
 import * as Blockly from "blockly";
 
 export const makeCodeTheme = Blockly.Theme.defineTheme("makecode", {
-    base: Blockly.Themes.Classic,
+  base: Blockly.Themes.Classic,
 
-    blockStyles: {
-        logic_blocks: {
-            colourPrimary: "#5C81A6",
-        },
-        math_blocks: {
-            colourPrimary: "#5CA65C",
-        },
-    },
+  fontStyle: {
+    family: "Inter, Be Vietnam Pro, Roboto, Arial, sans-serif",
+    size: 14,
+    weight: "500",
+  },
 
-    componentStyles: {
-        workspaceBackgroundColour: "#f3f3f3",
-        flyoutBackgroundColour: "#f8f9fa",
-        scrollbarColour: "#c1c1c1",
+  blockStyles: {
+    logic_blocks: {
+      colourPrimary: "#5C81A6",
     },
-    name: ""
+    math_blocks: {
+      colourPrimary: "#5CA65C",
+    },
+  },
+
+  componentStyles: {
+    workspaceBackgroundColour: "#f3f3f3",
+    flyoutBackgroundColour: "#f8f9fa",
+    scrollbarColour: "#c1c1c1",
+  },
+  name: "",
 });

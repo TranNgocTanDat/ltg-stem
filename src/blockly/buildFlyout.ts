@@ -9,6 +9,9 @@ export function buildFlyout(contents: FlyoutItem[]) {
       toolboxContents.push({
         kind: "block",
         type: item.type,
+        inputs: item.inputs,
+        fields: item.fields,
+        extraState: item.extraState,
       });
     }
 
@@ -16,6 +19,7 @@ export function buildFlyout(contents: FlyoutItem[]) {
       toolboxContents.push({
         kind: "label",
         text: item.text,
+        
       });
     }
 

@@ -6,4 +6,8 @@ declare module "blockly" {
       scrollbar?: boolean;
     };
   }
+
+  export function registerToolboxCategoryCallback(arg0: string, arg1: (workspace: any) => Element[] & FlyoutItemInfo[]) {
+    throw new Error("Function not implemented.");
+  }
 }
