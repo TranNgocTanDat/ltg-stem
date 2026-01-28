@@ -26,11 +26,29 @@ const saveProjects = (projects: BlocklyProject[]) => {
 
 export const createProject = (
   name: string,
-  workspace: Blockly.WorkspaceSvg
+  workspace: Blockly.WorkspaceSvg,
 ): BlocklyProject => {
   const xml = Blockly.utils.xml.domToText(
-    Blockly.Xml.workspaceToDom(workspace)
+    Blockly.Xml.workspaceToDom(workspace),
   );
+
+  const project: BlocklyProject = {
+    id: uuid(),
+    name,
+    updatedAt: Date.now(),
+    xml,
+  };
+
+  const projects = [project, ...getProjects()];
+  saveProjects(projects);
+  localStorage.setItem(ACTIVE_KEY, project.id);
+
+  return project;
+};
+
+export const createEmptyProject = (name: string): BlocklyProject => {
+  // minimal valid empty xml for Blockly
+  const xml = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>';
 
   const project: BlocklyProject = {
     id: uuid(),
@@ -48,28 +66,26 @@ export const createProject = (
 
 export const updateProject = (
   projectId: string,
-  workspace: Blockly.WorkspaceSvg
+  workspace: Blockly.WorkspaceSvg,
 ) => {
   const projects = getProjects();
 
   const xml = Blockly.utils.xml.domToText(
-    Blockly.Xml.workspaceToDom(workspace)
+    Blockly.Xml.workspaceToDom(workspace),
   );
 
   saveProjects(
-    projects.map(p =>
-      p.id === projectId
-        ? { ...p, xml, updatedAt: Date.now() }
-        : p
-    )
+    projects.map((p) =>
+      p.id === projectId ? { ...p, xml, updatedAt: Date.now() } : p,
+    ),
   );
 };
 
 export const loadProject = (
   projectId: string,
-  workspace: Blockly.WorkspaceSvg
+  workspace: Blockly.WorkspaceSvg,
 ) => {
-  const project = getProjects().find(p => p.id === projectId);
+  const project = getProjects().find((p) => p.id === projectId);
   if (!project) return;
 
   const dom = Blockly.utils.xml.textToDom(project.xml);

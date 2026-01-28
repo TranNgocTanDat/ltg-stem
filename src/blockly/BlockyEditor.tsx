@@ -29,6 +29,7 @@ import {
   getProjects,
   getActiveProjectId,
 } from "@/blockly/projects";
+import { ChartNoAxesGantt, Code, Pause, Play, Save } from "lucide-react";
 
 export default function BlocklyEditor() {
   const blocklyDiv = useRef<HTMLDivElement | null>(null);
@@ -303,93 +304,18 @@ export default function BlocklyEditor() {
         <div
           style={{
             position: "absolute",
-            top: 10,
-            right: 10,
+            top: "45%",
+            right: 30,
             zIndex: 10,
-            background: "#fff",
+            // background: "#fff",
             padding: 8,
             borderRadius: 6,
             boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
             display: "flex",
+            flexDirection: "column",
             gap: 8,
           }}
         >
-          <Button
-            onClick={() => {
-              const name = prompt("Nhập tên project:");
-              if (!name) return;
-
-              const ws = getWorkspaceSafe();
-              if (!ws) return;
-
-              try {
-                const p = createProject(name, ws);
-                setActiveProjectId(p.id);
-                setProjects(getProjects());
-              } catch (err) {
-                console.error("Failed to create project", err);
-                alert("Lưu project thất bại.");
-              }
-            }}
-          >
-            💾 Lưu project
-          </Button>
-          <Popover open={openProjects} onOpenChange={setOpenProjects}>
-            <PopoverTrigger asChild>
-              <Button variant="outline">📁 Projects</Button>
-            </PopoverTrigger>
-
-            <PopoverContent className="w-56 p-2">
-              {projects.length === 0 && (
-                <div className="text-xs text-muted-foreground">
-                  Chưa có project nào
-                </div>
-              )}
-
-              <div className="flex flex-col gap-1">
-                {projects.map((p) => (
-                  <Button
-                    key={p.id}
-                    variant={p.id === activeProjectId ? "default" : "secondary"}
-                    className="justify-start"
-                    onClick={() => {
-                      const ws = getWorkspaceSafe();
-                      if (!ws) return;
-
-                      try {
-                        loadProject(p.id, ws);
-                        setActiveProjectId(p.id);
-                        setOpenProjects(false); // 👈 đóng popover
-                        setProjects(getProjects());
-                      } catch (err) {
-                        console.error("Failed to load project", err);
-                        alert("Không thể load project — dữ liệu có thể bị hỏng.");
-                      }
-                    }}
-                  >
-                    {p.name}
-                  </Button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <Button
-            onClick={() => {
-              const ws = getWorkspaceSafe();
-              if (!ws) return;
-              try {
-                const code = pythonGenerator.workspaceToCode(ws);
-                alert(code);
-              } catch (err) {
-                console.error("Failed to generate python code", err);
-                alert("Không thể sinh Python từ workspace.");
-              }
-            }}
-          >
-            Xem Python
-          </Button>
-
           <Button
             onClick={() => {
               const ws = getWorkspaceSafe();
@@ -403,15 +329,104 @@ export default function BlocklyEditor() {
               }
             }}
           >
-            ▶ Chạy
+            <Play />
           </Button>
 
           <Button variant="destructive" onClick={stopProgram}>
-            ⏹ Dừng
+            <Pause />
           </Button>
         </div>
 
         <div ref={blocklyDiv} style={{ width: "100%", height: "100%" }} />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          zIndex: 10,
+
+          borderRadius: 6,
+          // boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
+          display: "flex",
+          gap: 15,
+        }}
+      >
+        <Button className="bg-white text-black"
+          onClick={() => {
+            const name = prompt("Nhập tên project:");
+            if (!name) return;
+
+            const ws = getWorkspaceSafe();
+            if (!ws) return;
+
+            try {
+              const p = createProject(name, ws);
+              setActiveProjectId(p.id);
+              setProjects(getProjects());
+            } catch (err) {
+              console.error("Failed to create project", err);
+              alert("Lưu project thất bại.");
+            }
+          }}
+        >
+          <Save />
+        </Button>
+        <Popover open={openProjects} onOpenChange={setOpenProjects}>
+          <PopoverTrigger asChild>
+            <Button variant="outline"><ChartNoAxesGantt /></Button>
+          </PopoverTrigger>
+
+          <PopoverContent className="w-56 p-2">
+            {projects.length === 0 && (
+              <div className="text-xs text-muted-foreground">
+                Chưa có project nào
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1">
+              {projects.map((p) => (
+                <Button
+                  key={p.id}
+                  variant={p.id === activeProjectId ? "default" : "secondary"}
+                  className="justify-start"
+                  onClick={() => {
+                    const ws = getWorkspaceSafe();
+                    if (!ws) return;
+
+                    try {
+                      loadProject(p.id, ws);
+                      setActiveProjectId(p.id);
+                      setOpenProjects(false); // 👈 đóng popover
+                      setProjects(getProjects());
+                    } catch (err) {
+                      console.error("Failed to load project", err);
+                      alert("Không thể load project — dữ liệu có thể bị hỏng.");
+                    }
+                  }}
+                >
+                  {p.name}
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <Button className="bg-white text-black"
+          onClick={() => {
+            const ws = getWorkspaceSafe();
+            if (!ws) return;
+            try {
+              const code = pythonGenerator.workspaceToCode(ws);
+              alert(code);
+            } catch (err) {
+              console.error("Failed to generate python code", err);
+              alert("Không thể sinh Python từ workspace.");
+            }
+          }}
+        >
+          <Code />
+        </Button>
       </div>
     </div>
   );
