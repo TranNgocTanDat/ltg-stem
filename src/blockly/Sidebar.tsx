@@ -27,12 +27,12 @@ export default function Sidebar({ onSelect, activeCategory }: Props) {
             key={cat.id}
             onClick={() => onSelect(cat.id)}
             style={{
-              background: isActive ? "#111" : cat.color,
+              background: isActive ? cat.color : cat.color,
+              border: isActive ? "2px solid orange" : "transparent",
               color: "#fff",
               display: "flex",
               alignItems: "center",
               gap: 10,
-              border: "none",
               borderRadius: 10,
               padding: "10px 12px",
               fontWeight: 600,

@@ -22,7 +22,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-
 import {
   createProject,
   updateProject,
@@ -30,7 +29,6 @@ import {
   getProjects,
   getActiveProjectId,
 } from "@/blockly/projects";
-
 
 export default function BlocklyEditor() {
   const blocklyDiv = useRef<HTMLDivElement | null>(null);
@@ -44,6 +42,14 @@ export default function BlocklyEditor() {
 
   const [openProjects, setOpenProjects] = useState(false);
 
+  // helper: safe workspace getter
+  const getWorkspaceSafe = (): Blockly.WorkspaceSvg | null => {
+    if (!workspaceRef.current) {
+      console.warn("Workspace not ready");
+      return null;
+    }
+    return workspaceRef.current;
+  };
 
   // ===== FLYOUT UTILS =====
   const getFlyout = (workspace: Blockly.WorkspaceSvg) =>
@@ -55,9 +61,17 @@ export default function BlocklyEditor() {
     if (!flyout) return;
 
     if (flyout.svgGroup_) {
-      flyout.svgGroup_.style.display = "none";
+      try {
+        (flyout.svgGroup_ as SVGElement).style.display = "none";
+      } catch {
+        /* ignore */
+      }
     }
-    flyout.scrollbar_?.setVisible(false);
+    try {
+      flyout.scrollbar_?.setVisible(false);
+    } catch {
+      /* ignore */
+    }
     Blockly.svgResize(workspace);
   };
 
@@ -66,9 +80,17 @@ export default function BlocklyEditor() {
     if (!flyout) return;
 
     if (flyout.svgGroup_) {
-      flyout.svgGroup_.style.display = "block";
+      try {
+        (flyout.svgGroup_ as SVGElement).style.display = "block";
+      } catch {
+        /* ignore */
+      }
     }
-    flyout.scrollbar_?.setVisible(false);
+    try {
+      flyout.scrollbar_?.setVisible(false);
+    } catch {
+      /* ignore */
+    }
     Blockly.svgResize(workspace);
   };
 
@@ -88,7 +110,8 @@ export default function BlocklyEditor() {
 
   // ===== DEFAULT BLOCKS =====
   const createDefaultStart = (workspace: Blockly.WorkspaceSvg) => {
-    if (workspace.getAllBlocks(false).some(b => b.type === "on_start")) return;
+    if (workspace.getAllBlocks(false).some((b) => b.type === "on_start"))
+      return;
     const block = workspace.newBlock("on_start");
     block.initSvg();
     block.render();
@@ -96,7 +119,7 @@ export default function BlocklyEditor() {
   };
 
   const createDefaultForever = (workspace: Blockly.WorkspaceSvg) => {
-    if (workspace.getAllBlocks(false).some(b => b.type === "forever")) return;
+    if (workspace.getAllBlocks(false).some((b) => b.type === "forever")) return;
     const block = workspace.newBlock("forever");
     block.initSvg();
     block.render();
@@ -128,23 +151,32 @@ export default function BlocklyEditor() {
 
     const activeId = getActiveProjectId();
     if (activeId) {
-      loadProject(activeId, workspace);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setActiveProjectId(activeId);
+      try {
+        loadProject(activeId, workspace);
+        setActiveProjectId(activeId);
+      } catch (err) {
+        console.error("Failed to load active project", err);
+        // don't block init, continue with default workspace
+      }
     }
-
 
     workspaceRef.current = workspace;
 
-    workspace.addChangeListener(e => {
+    // save on change (debounce could be added if needed)
+    workspace.addChangeListener((e) => {
       if (e.isUiEvent) return;
-      if (!activeProjectId) return;
+      const activeId = activeProjectId;
+      if (!activeId) return;
 
-      updateProject(activeProjectId, workspace);
+      // ensure workspace still exists
+      if (!workspaceRef.current) return;
+      updateProject(activeId, workspaceRef.current);
+      // update local state snapshot
+      setProjects(getProjects());
     });
 
     // 🔥 VARIABLES AUTO-REFRESH
-    workspace.addChangeListener(e => {
+    workspace.addChangeListener((e) => {
       if (activeCategoryRef.current !== "variables") return;
 
       if (
@@ -164,9 +196,10 @@ export default function BlocklyEditor() {
       }
     });
 
-    workspace.addChangeListener(e => {
+    // use ref to avoid stale closure for activeCategory
+    workspace.addChangeListener((e) => {
       if (!workspaceRef.current) return;
-      if (activeCategory !== "functions") return;
+      if (activeCategoryRef.current !== "functions") return;
 
       if (
         e.type === Blockly.Events.BLOCK_CREATE ||
@@ -185,17 +218,26 @@ export default function BlocklyEditor() {
       }
     });
 
-
-
-
     hideFlyout(workspace);
     createDefaultStart(workspace);
     createDefaultForever(workspace);
 
+    // sync projects across tabs
+    const onStorage = (e: StorageEvent) => {
+      if (!e.key) return;
+      if (e.key === "blockly_projects" || e.key === "blockly_active_project") {
+        setProjects(getProjects());
+        setActiveProjectId(getActiveProjectId());
+      }
+    };
+    window.addEventListener("storage", onStorage);
+
     return () => {
+      window.removeEventListener("storage", onStorage);
       workspace.dispose();
       workspaceRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ===== CATEGORY HANDLER =====
@@ -244,8 +286,7 @@ export default function BlocklyEditor() {
       return;
     }
 
-
-    const category = CATEGORIES.find(c => c.id === id);
+    const category = CATEGORIES.find((c) => c.id === id);
     if (!category) return;
 
     updateFlyout(buildFlyout(category.contents), true);
@@ -253,11 +294,10 @@ export default function BlocklyEditor() {
 
   // ===== RENDER =====
   return (
-    <div style={{ display: "flex", height: "calc(100vh - 4rem)", overflow: "hidden" }}>
-      <Sidebar
-        activeCategory={activeCategory}
-        onSelect={handleSelectCategory}
-      />
+    <div
+      style={{ display: "flex", height: "calc(100vh - 4rem)", overflow: "hidden" }}
+    >
+      <Sidebar activeCategory={activeCategory} onSelect={handleSelectCategory} />
 
       <div style={{ flex: 1, position: "relative" }}>
         <div
@@ -279,18 +319,24 @@ export default function BlocklyEditor() {
               const name = prompt("Nhập tên project:");
               if (!name) return;
 
-              const p = createProject(name, workspaceRef.current!);
-              setActiveProjectId(p.id);
-              setProjects(getProjects());
+              const ws = getWorkspaceSafe();
+              if (!ws) return;
+
+              try {
+                const p = createProject(name, ws);
+                setActiveProjectId(p.id);
+                setProjects(getProjects());
+              } catch (err) {
+                console.error("Failed to create project", err);
+                alert("Lưu project thất bại.");
+              }
             }}
           >
             💾 Lưu project
           </Button>
           <Popover open={openProjects} onOpenChange={setOpenProjects}>
             <PopoverTrigger asChild>
-              <Button variant="outline">
-                📁 Projects
-              </Button>
+              <Button variant="outline">📁 Projects</Button>
             </PopoverTrigger>
 
             <PopoverContent className="w-56 p-2">
@@ -301,15 +347,24 @@ export default function BlocklyEditor() {
               )}
 
               <div className="flex flex-col gap-1">
-                {projects.map(p => (
+                {projects.map((p) => (
                   <Button
                     key={p.id}
                     variant={p.id === activeProjectId ? "default" : "secondary"}
                     className="justify-start"
                     onClick={() => {
-                      loadProject(p.id, workspaceRef.current!);
-                      setActiveProjectId(p.id);
-                      setOpenProjects(false); // 👈 đóng popover
+                      const ws = getWorkspaceSafe();
+                      if (!ws) return;
+
+                      try {
+                        loadProject(p.id, ws);
+                        setActiveProjectId(p.id);
+                        setOpenProjects(false); // 👈 đóng popover
+                        setProjects(getProjects());
+                      } catch (err) {
+                        console.error("Failed to load project", err);
+                        alert("Không thể load project — dữ liệu có thể bị hỏng.");
+                      }
                     }}
                   >
                     {p.name}
@@ -319,21 +374,34 @@ export default function BlocklyEditor() {
             </PopoverContent>
           </Popover>
 
-
           <Button
-            onClick={() =>
-              alert(pythonGenerator.workspaceToCode(workspaceRef.current!))
-            }
+            onClick={() => {
+              const ws = getWorkspaceSafe();
+              if (!ws) return;
+              try {
+                const code = pythonGenerator.workspaceToCode(ws);
+                alert(code);
+              } catch (err) {
+                console.error("Failed to generate python code", err);
+                alert("Không thể sinh Python từ workspace.");
+              }
+            }}
           >
             Xem Python
           </Button>
 
           <Button
-            onClick={() =>
-              runProgram(
-                javascriptGenerator.workspaceToCode(workspaceRef.current!)
-              )
-            }
+            onClick={() => {
+              const ws = getWorkspaceSafe();
+              if (!ws) return;
+              try {
+                const code = javascriptGenerator.workspaceToCode(ws);
+                runProgram(code);
+              } catch (err) {
+                console.error("Failed to run program", err);
+                alert("Chạy chương trình thất bại.");
+              }
+            }}
           >
             ▶ Chạy
           </Button>

@@ -9,7 +9,7 @@ const TX_UUID = "abcd5678-1234-1234-1234-abcdef654321"; // esp32 -> web
 
 /* ================= BLE MANAGER ================= */
 
-class BleManager {
+export class BleManager {
   private device: BluetoothDevice | null = null;
   private rxChar: BluetoothRemoteGATTCharacteristic | null = null;
   private txChar: BluetoothRemoteGATTCharacteristic | null = null;
