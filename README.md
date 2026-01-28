@@ -3,7 +3,7 @@
 ![Blockly STEM](https://img.shields.io/badge/Blockly-12.3.1-blue)
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF?logo=vite)
+![Vite](https://img.shields.io/badge/Vite-7.3.1-646CFF?logo=vite)
 
 A visual programming editor built with Blockly for STEM education, featuring Bluetooth connectivity to ESP32 microcontrollers and IoT devices.
 
