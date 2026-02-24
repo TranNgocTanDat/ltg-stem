@@ -9,9 +9,9 @@ const route = createBrowserRouter([
     path: "/",
     element: <MasterLayout />,
     children: [
-      { path: "/", element: <HomePage /> },
+      { path: "/", element: <HomeBlockPage /> },
       { path: "/editor-blockly", element: <BlocklyPage /> },
-      { path: "/home-blockly", element: <HomeBlockPage /> },
+      // { path: "/home-blockly", element: <HomeBlockPage /> },
     ],
   },
 ]);
