@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MasterLayout from "../layout/MasterLayout/MasterLayout";
-import HomePage from "../components/landing/page";
 import BlocklyPage from "@/blockly/BlocklyPage";
 import HomeBlockPage from "@/blockly/HomeBlockPage";
 
