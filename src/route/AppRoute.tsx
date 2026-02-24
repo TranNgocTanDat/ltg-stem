@@ -11,7 +11,7 @@ const route = createBrowserRouter([
     children: [
       { path: "/", element: <HomeBlockPage /> },
       { path: "/editor-blockly", element: <BlocklyPage /> },
-      // { path: "/home-blockly", element: <HomeBlockPage /> },
+
     ],
   },
 ]);
