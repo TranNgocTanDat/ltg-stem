@@ -1,9 +1,9 @@
-import { handlers } from "@/blockly/protocol/HandlerRegistry";
+// import { handlers } from "@/blockly/protocol/HandlerRegistry";
 
-handlers.on("uc.close",packet=>{
+// handlers.on("uc.close",packet=>{
 
-    console.log("CLOSE");
+//     console.log("CLOSE");
 
-    console.log(packet);
+//     console.log(packet);
 
-});
+// });

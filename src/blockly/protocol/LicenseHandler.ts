@@ -1,12 +1,12 @@
-import { handlers } from "./HandlerRegistry";
+// import { handlers } from "./HandlerRegistry";
 
-handlers.on(
-    "device.get_license",
-    packet=>{
+// handlers.on(
+//     "device.get_license",
+//     packet=>{
 
-        console.log("LICENSE");
+//         console.log("LICENSE");
 
-        console.log(packet);
+//         console.log(packet);
 
-    }
-);
+//     }
+// );

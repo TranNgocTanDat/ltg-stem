@@ -35,7 +35,7 @@ export class HandlerRegistry {
 
         if (!packet?.event) return;
 
-        console.log("HANDLER", packet.event);
+        // console.log("HANDLER", packet.event);
 
         const list = this.handlers.get(packet.event);
 

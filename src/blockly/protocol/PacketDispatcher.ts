@@ -5,9 +5,9 @@ import { mailbox } from "./MailboxSingleton";
 export class PacketDispatcher {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch(packet: any) {
-    console.log("PACKET");
+    // console.log("PACKET");
 
-    console.log(packet);
+    // console.log(packet);
 
     if (packet.uuid) {
       mailbox.push(packet);

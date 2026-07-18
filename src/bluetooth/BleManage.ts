@@ -79,9 +79,9 @@ export class BleManager {
   }
 
   async write(data: Uint8Array) {
-    console.log("TX");
+    // console.log("TX");
 
-    console.log(data);
+    // console.log(data);
     if (!this.characteristic) {
       throw new Error("BLE not connected");
     }
@@ -94,9 +94,9 @@ export class BleManager {
       throw new Error("BLE not connected");
     }
 
-    const flag = chunk[0];
+    // const flag = chunk[0];
 
-    console.log("TX", flag);
+    // console.log("TX", flag);
 
     // Đăng ký ACK trước
     const waitAck = this.ack.create();
@@ -115,38 +115,38 @@ export class BleManager {
 
     const bytes = new Uint8Array(characteristic.value.buffer);
 
-    console.log("RX length =", bytes.length);
+    // console.log("RX length =", bytes.length);
 
-    console.log(bytes);
+    // console.log(bytes);
 
     if (bytes.length == 1) {
-      const flag = bytes[0];
+      // const flag = bytes[0];
 
-      console.log(
-        "ACK",
+      // console.log(
+      //   "ACK",
 
-        flag,
-      );
+      //   flag,
+      // );
 
       this.ack.ack();
 
       return;
     }
-    console.log("RX length =", bytes.length);
-    console.log(bytes);
+    // console.log("RX length =", bytes.length);
+    // console.log(bytes);
     this.events.emit(BLE_EVENTS.MESSAGE, bytes);
     const packetBytes = this.decoder.add(bytes);
 
     if (packetBytes) {
-      console.log("Decoded Bytes");
-      console.log(packetBytes);
+      // console.log("Decoded Bytes");
+      // console.log(packetBytes);
 
       const packet = MessagePack.decode(packetBytes);
 
-      console.log("========= FULL DECODE =========");
-      console.dir(packet);
-      console.log(JSON.stringify(packet, null, 2));
-      console.log("===============================");
+      // console.log("========= FULL DECODE =========");
+      // console.dir(packet);
+      // console.log(JSON.stringify(packet, null, 2));
+      // console.log("===============================");
 
       dispatcher.dispatch(packet);
     }

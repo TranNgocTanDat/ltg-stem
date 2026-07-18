@@ -1,9 +1,9 @@
-import { handlers } from "@/blockly/protocol/HandlerRegistry";
+// import { handlers } from "@/blockly/protocol/HandlerRegistry";
 
-handlers.on("ucmd",packet=>{
+// handlers.on("ucmd",packet=>{
 
-    console.log("UCMD");
+//     console.log("UCMD");
 
-    console.log(packet);
+//     console.log(packet);
 
-});
+// });

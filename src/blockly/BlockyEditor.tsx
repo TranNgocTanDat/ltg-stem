@@ -350,13 +350,13 @@ export default function BlocklyEditor() {
                   }
 
                 }
-                console.log("========== BEGIN ==========");
-                console.log(beginCode);
-                console.log(JSON.stringify(beginCode));
-                alert(beginCode);
-                console.log("========== LOOP ==========");
-                console.log(loopCode);
-                console.log(JSON.stringify(loopCode));
+                // console.log("========== BEGIN ==========");
+                // console.log(beginCode);
+                // console.log(JSON.stringify(beginCode));
+                // alert(beginCode);
+                // console.log("========== LOOP ==========");
+                // console.log(loopCode);
+                // console.log(JSON.stringify(loopCode));
 
                 const code = `
 import coroutine
@@ -378,9 +378,9 @@ async def usercode_setup():
 async def usercode_loop():
 ${indent(loopCode)}
 `;
-                console.log("========== FINAL ==========");
-                console.log(code);
-                console.log(JSON.stringify(code));
+                // console.log("========== FINAL ==========");
+                // console.log(code);
+                // console.log(JSON.stringify(code));
 
                 console.log("START UPLOAD");
 

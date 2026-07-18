@@ -1,12 +1,12 @@
-import { handlers } from "./HandlerRegistry";
+// import { handlers } from "./HandlerRegistry";
 
-handlers.on(
-    "gb.handshake",
-    packet=>{
+// handlers.on(
+//     "gb.handshake",
+//     packet=>{
 
-        console.log("HANDSHAKE EVENT");
+//         console.log("HANDSHAKE EVENT");
 
-        console.log(packet);
+//         console.log(packet);
 
-    }
-);
+//     }
+// );

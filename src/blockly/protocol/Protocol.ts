@@ -12,19 +12,19 @@ export class Protocol {
   async send(obj: any) {
     console.log("SEND");
 
-    console.dir(obj);
+    // console.dir(obj);
 
-    console.log(JSON.stringify(obj, null, 2));
+    // console.log(JSON.stringify(obj, null, 2));
 
     const encoded = MessagePack.encode(obj);
 
-    console.log("ENCODED");
-    console.log(encoded);
+    // console.log("ENCODED");
+    // console.log(encoded);
 
     const chunks = Chunk.encode(encoded, this.mtu);
 
-    console.log("CHUNKS");
-    console.log(chunks);
+    // console.log("CHUNKS");
+    // console.log(chunks);
 
     for (const chunk of chunks) {
       await ble.writeChunk(chunk);
@@ -46,14 +46,14 @@ export class Protocol {
       },
     };
 
-    console.log("Handshake", pkg);
+    // console.log("Handshake", pkg);
 
     await this.send(pkg);
-    const response = await mailbox.wait(uuid);
+    await mailbox.wait(uuid);
+    // const response =
+    // console.log("Handshake Response");
 
-    console.log("Handshake Response");
-
-    console.log(response);
+    // console.log(response);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

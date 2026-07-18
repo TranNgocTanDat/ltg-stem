@@ -30,17 +30,17 @@ const Header = () => {
       }
     );
 
-    const offMessage = ble.events.on<Uint8Array>(
-      BLE_EVENTS.MESSAGE,
-      (data) => {
-        console.log("RX:", data);
-      }
-    );
+    // const offMessage = ble.events.on<Uint8Array>(
+    //   BLE_EVENTS.MESSAGE,
+    //   (data) => {
+    //     console.log("RX:", data);
+    //   }
+    // );
 
     return () => {
       offConnected();
       offDisconnected();
-      offMessage();
+      // offMessage();
     };
   }, []);
 

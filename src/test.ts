@@ -1,22 +1,22 @@
-import { Chunk } from "./blockly/protocol/Chunk";
-import { MessagePack } from "./blockly/protocol/MessagePack";
+// import { Chunk } from "./blockly/protocol/Chunk";
+// import { MessagePack } from "./blockly/protocol/MessagePack";
 
-const bytes = MessagePack.encode({
-    event: "ping",
-    hello: "world",
-});
+// const bytes = MessagePack.encode({
+//     event: "ping",
+//     hello: "world",
+// });
 
-console.log(bytes);
+// console.log(bytes);
 
-console.log(
-    MessagePack.decode(bytes)
-);
+// console.log(
+//     MessagePack.decode(bytes)
+// );
 
-const packets = Chunk.encode(
-    new Uint8Array(600),
-    244
-);
+// const packets = Chunk.encode(
+//     new Uint8Array(600),
+//     244
+// );
 
 
 
-console.log(packets);
+// console.log(packets);

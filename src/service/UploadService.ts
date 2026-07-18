@@ -6,7 +6,7 @@ export class UploadService {
 
     await this.enterUploadMode();
 
-    await this.sendMetadata(code);
+    await this.sendMetadata();
 
     await this.open();
 
@@ -21,8 +21,8 @@ export class UploadService {
 
   private async enterUploadMode() {
     const uuid = "#" + crypto.randomUUID().slice(0, 7);
-
-    const res = await protocol.request({
+// const res = 
+    await protocol.request({
       uuid,
 
       event: "ucmd",
@@ -32,11 +32,10 @@ export class UploadService {
       },
     });
 
-    console.log(res);
+    // console.log(res);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private async sendMetadata(code: string) {
+  private async sendMetadata() {
     const uuid = "#" + crypto.randomUUID().slice(0, 7);
 
     await protocol.send({
