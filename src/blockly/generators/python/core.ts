@@ -7,15 +7,7 @@ import { pythonGenerator } from "blockly/python";
 pythonGenerator.forBlock["on_start"] = function (
   block: Blockly.Block
 ) {
-  const body =
-    pythonGenerator.statementToCode(block, "DO");
-
-  return `
-def on_start():
-${body || "    pass"}
-
-on_start()
-`;
+  return pythonGenerator.statementToCode(block, "DO");
 };
 
 /* =========================
@@ -24,13 +16,7 @@ on_start()
 pythonGenerator.forBlock["forever"] = function (
   block: Blockly.Block
 ) {
-  const body =
-    pythonGenerator.statementToCode(block, "DO");
-
-  return `
-while True:
-${body || "    pass"}
-`;
+  return pythonGenerator.statementToCode(block, "DO");
 };
 
 /* =========================

@@ -12,3 +12,19 @@ Blockly.Blocks["on_start"] = {
     this.setMovable(true);
   },
 };
+
+Blockly.Blocks["ltg_if"] = {
+  init() {
+    this.appendValueInput("IF0")
+      .setCheck("Boolean")
+      .appendField("nếu");
+
+    this.appendStatementInput("DO0")
+      .appendField("thì");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setColour("#4C97FF");
+  },
+};

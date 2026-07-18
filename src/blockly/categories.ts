@@ -1,5 +1,15 @@
 import type { FlyoutItem } from "./blocklyTypes";
-import { ChartSpline, GitBranch, Home, List, Repeat, Sigma, Type, Variable, type LucideIcon } from "lucide-react";
+import {
+  ChartSpline,
+  GitBranch,
+  Home,
+  List,
+  Repeat,
+  Sigma,
+  Type,
+  Variable,
+  type LucideIcon,
+} from "lucide-react";
 
 export const CATEGORIES: {
   id: string;
@@ -29,7 +39,7 @@ export const CATEGORIES: {
     color: "#3ba1c5",
     icon: GitBranch,
     contents: [
-      { kind: "block", type: "controls_if" },
+      { kind: "block", type: "ltg_if" },
       { kind: "block", type: "controls_ifelse" },
       { kind: "block", type: "logic_compare" },
       { kind: "block", type: "logic_operation" },
@@ -566,6 +576,83 @@ export const CATEGORIES: {
     contents: [
       { kind: "label", text: "LED RGB" },
       { kind: "block", type: "rgb_led_set" },
+
+      { kind: "sep", gap: 16 },
+
+      { kind: "label", text: "Động cơ" },
+      {
+        kind: "block",
+        type: "robot_forward",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_forward_ms",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1000,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_backward",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_backward_ms",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1000,
+              },
+            },
+          },
+        },
+      },
+      { kind: "block", type: "robot_stop" },
     ],
   },
 ];

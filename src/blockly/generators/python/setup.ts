@@ -8,6 +8,7 @@ pythonGenerator.finish = function (code: string) {
 from time import sleep_ms
 
 # Device API (stub)
+
 def rgb_set(port, index, r, g, b):
     pass
 

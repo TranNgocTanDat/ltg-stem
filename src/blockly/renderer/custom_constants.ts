@@ -11,11 +11,17 @@ export class CustomConstants extends Blockly.blockRendering.ConstantProvider {
   override init() {
     super.init();
 
-    this.CORNER_RADIUS = 8;
-    this.BLOCK_PADDING = 12;
-    this.MIN_BLOCK_HEIGHT = 20;
+    this.CORNER_RADIUS = 6;
 
-    this.NOTCH_WIDTH = 40;
-    this.NOTCH_HEIGHT = 8;
+    this.MIN_BLOCK_HEIGHT = 36;
+
+    this.NOTCH_WIDTH = 18;
+    this.NOTCH_HEIGHT = 6;
+
+    this.TAB_HEIGHT = 24;
+    this.TAB_WIDTH = 12;
+
+    this.MEDIUM_PADDING = 12;
+    this.SMALL_PADDING = 6;
   }
 }

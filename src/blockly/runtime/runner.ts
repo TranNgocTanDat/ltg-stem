@@ -1,4 +1,4 @@
-import { ble } from "@/bluetooth/bleManager";
+import { ble } from "@/bluetooth";
 
 const __runtime = {
   running: false,

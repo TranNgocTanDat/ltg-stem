@@ -12,10 +12,10 @@ import { makeCodeTheme } from "./makeCodeTheme";
 import { EMPTY_TOOLBOX } from "./emptyToolbox";
 
 import { pythonGenerator } from "blockly/python";
-import { javascriptGenerator } from "blockly/javascript";
 import { Button } from "@/components/ui/button";
 
-import { runProgram, stopProgram } from "@/blockly/runtime/runner";
+import { stopProgram } from "@/blockly/runtime/runner";
+import { uploader } from "@/service/UploadService";
 import {
   Popover,
   PopoverContent,
@@ -293,6 +293,15 @@ export default function BlocklyEditor() {
     updateFlyout(buildFlyout(category.contents), true);
   };
 
+  function indent(code: string) {
+    if (!code.trim()) return "    pass";
+
+    return code
+      .split("\n")
+      .map(line => line ? "    " + line : "")
+      .join("\n");
+  }
+
   // ===== RENDER =====
   return (
     <div
@@ -317,15 +326,72 @@ export default function BlocklyEditor() {
           }}
         >
           <Button
-            onClick={() => {
+            onClick={async () => {
               const ws = getWorkspaceSafe();
               if (!ws) return;
+
               try {
-                const code = javascriptGenerator.workspaceToCode(ws);
-                runProgram(code);
+
+                const blocks = ws.getTopBlocks(true);
+
+                let beginCode = "";
+                let loopCode = "";
+
+                for (const block of blocks) {
+
+                  if (block.type === "on_start") {
+                    beginCode =
+                      pythonGenerator.blockToCode(block) as string;
+                  }
+
+                  if (block.type === "forever") {
+                    loopCode =
+                      pythonGenerator.blockToCode(block) as string;
+                  }
+
+                }
+                console.log("========== BEGIN ==========");
+                console.log(beginCode);
+                console.log(JSON.stringify(beginCode));
+                alert(beginCode);
+                console.log("========== LOOP ==========");
+                console.log(loopCode);
+                console.log(JSON.stringify(loopCode));
+
+                const code = `
+import coroutine
+import motor
+import uasyncio
+import gc;gc.collect()
+import interactive
+import board
+from constants import *
+import flag
+import usercode
+
+async def usercode_begin():
+${indent(beginCode)}
+
+async def usercode_setup():
+    flag.remove(flag.PROGRAME_ONSTART)
+
+async def usercode_loop():
+${indent(loopCode)}
+`;
+                console.log("========== FINAL ==========");
+                console.log(code);
+                console.log(JSON.stringify(code));
+
+                console.log("START UPLOAD");
+
+                await uploader.upload(code);
+
+                console.log("UPLOAD SUCCESS");
+
+                alert("Upload thành công");
               } catch (err) {
-                console.error("Failed to run program", err);
-                alert("Chạy chương trình thất bại.");
+                console.error("Failed to upload", err);
+                alert("Upload thất bại");
               }
             }}
           >

@@ -12,4 +12,6 @@ import "./generators/javascript/device";
 import "./generators/python";
 
 import "./renderer";
+import "./blocks/device/motor";
+
 
