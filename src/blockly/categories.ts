@@ -1,5 +1,6 @@
 import type { FlyoutItem } from "./blocklyTypes";
 import {
+  CarFront,
   ChartSpline,
   GitBranch,
   Home,
@@ -18,6 +19,178 @@ export const CATEGORIES: {
   icon: LucideIcon;
   contents: FlyoutItem[];
 }[] = [
+  {
+    id: "device",
+    name: "ĐỘNG CƠ",
+    color: "#E67E22",
+    icon: CarFront,
+    contents: [
+      // { kind: "label", text: "LED RGB" },
+      // { kind: "block", type: "rgb_led_set" },
+
+      // { kind: "sep", gap: 16 },
+
+      { kind: "label", text: "Động cơ" },
+      {
+        kind: "block",
+        type: "robot_forward",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_forward_ms",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_backward",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_backward_ms",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1,
+              },
+            },
+          },
+        },
+      },
+      { kind: "block", type: "robot_stop" },
+      {
+        kind: "block",
+        type: "robot_rotate_left_ms",
+        inputs: {
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 500,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_rotate_right_ms",
+        inputs: {
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 500,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_rotate_left",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "robot_rotate_right",
+        inputs: {
+          POWER: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+        },
+      },
+      // {
+      //   kind: "block",
+      //   type: "robot_turn_left",
+      //   inputs: {
+      //     POWER: {
+      //       shadow: {
+      //         type: "math_number",
+      //         fields: {
+      //           NUM: 80,
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
+
+      {
+        kind: "block",
+        type: "robot_delay",
+        inputs: {
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1000,
+              },
+            },
+          },
+        },
+      },
+    ],
+  },
   {
     id: "basic",
     name: "Cơ bản",
@@ -567,92 +740,5 @@ export const CATEGORIES: {
     color: "#995ba5",
     icon: ChartSpline,
     contents: [],
-  },
-  {
-    id: "device",
-    name: "Thiết bị",
-    color: "#E67E22",
-    icon: Type,
-    contents: [
-      { kind: "label", text: "LED RGB" },
-      { kind: "block", type: "rgb_led_set" },
-
-      { kind: "sep", gap: 16 },
-
-      { kind: "label", text: "Động cơ" },
-      {
-        kind: "block",
-        type: "robot_forward",
-        inputs: {
-          POWER: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 80,
-              },
-            },
-          },
-        },
-      },
-      {
-        kind: "block",
-        type: "robot_forward_ms",
-        inputs: {
-          POWER: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 80,
-              },
-            },
-          },
-          TIME: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 1000,
-              },
-            },
-          },
-        },
-      },
-      {
-        kind: "block",
-        type: "robot_backward",
-        inputs: {
-          POWER: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 80,
-              },
-            },
-          },
-        },
-      },
-      {
-        kind: "block",
-        type: "robot_backward_ms",
-        inputs: {
-          POWER: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 80,
-              },
-            },
-          },
-          TIME: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 1000,
-              },
-            },
-          },
-        },
-      },
-      { kind: "block", type: "robot_stop" },
-    ],
   },
 ];

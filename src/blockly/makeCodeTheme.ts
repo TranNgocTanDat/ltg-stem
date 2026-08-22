@@ -7,7 +7,7 @@ export const makeCodeTheme = Blockly.Theme.defineTheme("makecode", {
   fontStyle: {
     family: "Inter, Be Vietnam Pro, Roboto, Arial, sans-serif",
     size: 14,
-    weight: "500",
+    // weight: "500",
   },
 
   blockStyles: {

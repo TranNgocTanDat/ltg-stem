@@ -14,7 +14,6 @@ import { EMPTY_TOOLBOX } from "./emptyToolbox";
 import { pythonGenerator } from "blockly/python";
 import { Button } from "@/components/ui/button";
 
-import { stopProgram } from "@/blockly/runtime/runner";
 import { uploader } from "@/service/UploadService";
 import {
   Popover,
@@ -78,6 +77,7 @@ export default function BlocklyEditor() {
 
   const showFlyout = (workspace: Blockly.WorkspaceSvg) => {
     const flyout = getFlyout(workspace);
+    
     if (!flyout) return;
 
     if (flyout.svgGroup_) {
@@ -109,6 +109,19 @@ export default function BlocklyEditor() {
     show ? showFlyout(workspace) : hideFlyout(workspace);
   };
 
+  // ===== CLOSE CATEGORY =====
+  const closeCategory = () => {
+    if (activeCategoryRef.current === null) return;
+
+    activeCategoryRef.current = null;
+    setActiveCategory(null);
+
+    const workspace = workspaceRef.current;
+    if (!workspace) return;
+
+    updateFlyout(EMPTY_TOOLBOX, false);
+  };
+
   // ===== DEFAULT BLOCKS =====
   const createDefaultStart = (workspace: Blockly.WorkspaceSvg) => {
     if (workspace.getAllBlocks(false).some((b) => b.type === "on_start"))
@@ -135,7 +148,7 @@ export default function BlocklyEditor() {
     Blockly.setLocale(vi as unknown as Record<string, string>);
 
     const workspace = Blockly.inject(blocklyDiv.current, {
-      renderer: "custom_renderer",
+      // renderer: "custom_renderer",
       theme: makeCodeTheme,
       trashcan: true,
       toolbox: EMPTY_TOOLBOX,
@@ -162,6 +175,170 @@ export default function BlocklyEditor() {
     }
 
     workspaceRef.current = workspace;
+
+    // ========================================
+    // FLYOUT CLICK / DRAG HANDLER
+    // ========================================
+
+    let pointerDownOnFlyoutBlock = false;
+    let pointerMoved = false;
+    let startX = 0;
+    let startY = 0;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let clickedFlyoutBlock: Blockly.BlockSvg | null = null;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (activeCategoryRef.current === null) return;
+
+      const target = e.target as Element;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const flyout = workspace.getFlyout() as any;
+
+      if (!flyout?.svgGroup_?.contains(target)) return;
+
+      const flyoutBlockElement = target.closest(
+        ".blocklyBlockCanvas .blocklyDraggable"
+      );
+
+      if (!flyoutBlockElement) return;
+
+      // ⭐ Lấy block Blockly tương ứng với SVG element
+      clickedFlyoutBlock = null;
+
+      const flyoutWorkspace = flyout.getWorkspace();
+
+      if (flyoutWorkspace) {
+        const blocks = flyoutWorkspace.getAllBlocks(false);
+
+        clickedFlyoutBlock =
+          blocks.find((block: Blockly.BlockSvg) => {
+            return block.getSvgRoot()?.contains(flyoutBlockElement);
+          }) || null;
+      }
+
+      pointerDownOnFlyoutBlock = true;
+      pointerMoved = false;
+
+      startX = e.clientX;
+      startY = e.clientY;
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!pointerDownOnFlyoutBlock) return;
+
+      const dx = Math.abs(e.clientX - startX);
+      const dy = Math.abs(e.clientY - startY);
+
+      // Di chuyển > 5px => coi là DRAG
+      if (dx > 5 || dy > 5) {
+        pointerMoved = true;
+      }
+    };
+
+    const handlePointerUp = () => {
+      if (!pointerDownOnFlyoutBlock) return;
+
+      const wasClick = !pointerMoved;
+
+      pointerDownOnFlyoutBlock = false;
+      pointerMoved = false;
+
+      // Kéo block → Blockly xử lý như bình thường
+      if (!wasClick) {
+        clickedFlyoutBlock = null;
+        return;
+      }
+
+      // ==============================
+      // CLICK BLOCK
+      // ==============================
+
+      if (!clickedFlyoutBlock) {
+        return;
+      }
+
+      const flyoutBlock = clickedFlyoutBlock;
+      clickedFlyoutBlock = null;
+
+      try {
+        const state = Blockly.serialization.blocks.save(flyoutBlock);
+
+        if (!state) {
+          console.error("Không thể lưu trạng thái block từ flyout.");
+          return;
+        }
+
+        const newBlock = Blockly.serialization.blocks.append(
+          state,
+          workspace
+        );
+
+        newBlock.moveBy(100, 100);
+
+        setTimeout(() => {
+          closeCategory();
+        }, 50);
+
+      } catch (err) {
+        console.error("Không thể tạo block từ flyout:", err);
+      }
+    };
+
+    // ========================================
+    // CLICK VÀO WORKSPACE
+    // ========================================
+
+    const handleWorkspacePointerDown = (e: PointerEvent) => {
+      if (activeCategoryRef.current === null) return;
+
+      const target = e.target as Element;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const flyout = workspace.getFlyout() as any;
+
+      // Nếu click trong flyout thì không xử lý
+      if (flyout?.svgGroup_?.contains(target)) {
+        return;
+      }
+
+      // Nếu click sidebar/toolbox thì không xử lý
+      if (target.closest(".blocklyToolboxDiv")) {
+        return;
+      }
+
+      const workspaceSvg = workspace.getParentSvg();
+
+      // Click vào workspace
+      if (workspaceSvg.contains(target)) {
+        closeCategory();
+      }
+    };
+
+    document.addEventListener(
+      "pointerdown",
+      handlePointerDown,
+      true
+    );
+
+    document.addEventListener(
+      "pointermove",
+      handlePointerMove,
+      true
+    );
+
+    document.addEventListener(
+      "pointerup",
+      handlePointerUp,
+      true
+    );
+
+    document.addEventListener(
+      "pointerup",
+      handleWorkspacePointerDown,
+      true
+    );
 
     // save on change (debounce could be added if needed)
     workspace.addChangeListener((e) => {
@@ -235,6 +412,31 @@ export default function BlocklyEditor() {
 
     return () => {
       window.removeEventListener("storage", onStorage);
+
+      document.removeEventListener(
+        "pointerdown",
+        handlePointerDown,
+        true
+      );
+
+      document.removeEventListener(
+        "pointermove",
+        handlePointerMove,
+        true
+      );
+
+      document.removeEventListener(
+        "pointerup",
+        handlePointerUp,
+        true
+      );
+
+      document.removeEventListener(
+        "pointerup",
+        handleWorkspacePointerDown,
+        true
+      );
+
       workspace.dispose();
       workspaceRef.current = null;
     };
@@ -328,35 +530,73 @@ export default function BlocklyEditor() {
           <Button
             onClick={async () => {
               const ws = getWorkspaceSafe();
-              if (!ws) return;
+
+              if (!ws) {
+                alert("Workspace không tồn tại");
+                return;
+              }
 
               try {
-
                 const blocks = ws.getTopBlocks(true);
 
                 let beginCode = "";
-                let loopCode = "";
+                let foreverHandler = "";
+                let foreverId = "";
+
+                // ========================================
+                // LẤY CODE TỪ CÁC TOP BLOCK
+                // ========================================
 
                 for (const block of blocks) {
-
+                  // ON START
                   if (block.type === "on_start") {
                     beginCode =
                       pythonGenerator.blockToCode(block) as string;
                   }
 
+                  // FOREVER
                   if (block.type === "forever") {
-                    loopCode =
+                    foreverId = block.id;
+
+                    foreverHandler =
                       pythonGenerator.blockToCode(block) as string;
                   }
-
                 }
-                // console.log("========== BEGIN ==========");
-                // console.log(beginCode);
-                // console.log(JSON.stringify(beginCode));
-                // alert(beginCode);
-                // console.log("========== LOOP ==========");
-                // console.log(loopCode);
-                // console.log(JSON.stringify(loopCode));
+
+                // ========================================
+                // TẠO TÊN FUNCTION FOREVER
+                // ========================================
+
+                const foreverFunctionName =
+                  `routine_${foreverId.replace(
+                    /[^a-zA-Z0-9_]/g,
+                    "_"
+                  )}`;
+
+                // ========================================
+                // TẠO ASYNC FUNCTION
+                // ========================================
+
+                const foreverFunction = `
+async def ${foreverFunctionName}():
+${indent(foreverHandler || "    pass")}
+`;
+
+                // ========================================
+                // TẠO ROUTINE
+                // ========================================
+
+                const foreverRoutine = `
+coroutine.createRoutine(
+    ${foreverFunctionName},
+    1,
+    3
+)
+`;
+
+                // ========================================
+                // TẠO FINAL PYTHON CODE
+                // ========================================
 
                 const code = `
 import coroutine
@@ -368,29 +608,28 @@ import board
 from constants import *
 import flag
 import usercode
+import timer
 
 async def usercode_begin():
-${indent(beginCode)}
+${indent(beginCode || "    pass")}
+
+${foreverFunction}
 
 async def usercode_setup():
     flag.remove(flag.PROGRAME_ONSTART)
-
-async def usercode_loop():
-${indent(loopCode)}
+${indent(foreverRoutine)}
 `;
-                // console.log("========== FINAL ==========");
-                // console.log(code);
-                // console.log(JSON.stringify(code));
 
-                console.log("START UPLOAD");
+                // ========================================
+                // UPLOAD
+                // ========================================
 
                 await uploader.upload(code);
 
-                console.log("UPLOAD SUCCESS");
-
                 alert("Upload thành công");
+
               } catch (err) {
-                console.error("Failed to upload", err);
+                console.error("Upload failed:", err);
                 alert("Upload thất bại");
               }
             }}
@@ -398,7 +637,16 @@ ${indent(loopCode)}
             <Play />
           </Button>
 
-          <Button variant="destructive" onClick={stopProgram}>
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              try {
+                await uploader.upload("");
+              } catch (err) {
+                console.error("Pause failed:", err);
+              }
+            }}
+          >
             <Pause />
           </Button>
         </div>

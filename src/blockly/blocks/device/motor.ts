@@ -1,17 +1,23 @@
 import * as Blockly from "blockly";
+import img_forward from "@/assets/icons/forward.png";
+import img_backward from "@/assets/icons/backward.png";
+import img_stop from "@/assets/icons/stop.png";
+import img_turn_left from "@/assets/icons/turn_left.png";
+import img_turn_right from "@/assets/icons/turn_right.png";
+import img_rotate_left from "@/assets/icons/rotate_left.png";
+import img_rotate_right from "@/assets/icons/rotate_right.png";
 
 Blockly.Blocks["robot_forward"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField("🤖 Robot:")
-      .appendField("Đi thẳng với tốc độ");
+      .appendField(new Blockly.FieldImage(img_forward, 60, 60, "Robot"))
+      .appendField("Đi thẳng");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 
     this.setInputsInline(true);
-
     this.setColour("#2CA8B8");
 
     this.setTooltip("Robot đi thẳng");
@@ -22,16 +28,21 @@ Blockly.Blocks["robot_forward_ms"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField("Robot: Đi thẳng với tốc độ");
+      .appendField(new Blockly.FieldImage(img_forward, 60, 60, "Robot"))
+      .appendField("Đi thẳng");
 
     this.appendDummyInput().appendField("trong");
 
-    this.appendValueInput("TIME").setCheck("Number").appendField("ms");
+    this.appendValueInput("TIME").setCheck("Number");
+
+    this.appendDummyInput().appendField("giây");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 
     this.setColour("#00ACC1");
+
+    this.setTooltip("Robot đi thẳng trong khoảng thời gian");
   },
 };
 
@@ -39,8 +50,8 @@ Blockly.Blocks["robot_backward"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField("🤖 Robot:")
-      .appendField("Đi lùi với tốc độ");
+      .appendField(new Blockly.FieldImage(img_backward, 60, 60, "Robot"))
+      .appendField("Đi lùi");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -57,11 +68,14 @@ Blockly.Blocks["robot_backward_ms"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField("Robot: Đi lùi với tốc độ");
+      .appendField(new Blockly.FieldImage(img_backward, 60, 60, "Robot"))
+      .appendField("Đi lùi");
 
     this.appendDummyInput().appendField("trong");
 
-    this.appendValueInput("TIME").setCheck("Number").appendField("ms");
+    this.appendValueInput("TIME").setCheck("Number");
+
+    this.appendDummyInput().appendField("giây");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -72,7 +86,9 @@ Blockly.Blocks["robot_backward_ms"] = {
 
 Blockly.Blocks["robot_stop"] = {
   init() {
-    this.appendDummyInput().appendField("Robot: Dừng lại");
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldImage(img_stop, 60, 60, "Robot"))
+      .appendField("Dừng lại");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -81,12 +97,11 @@ Blockly.Blocks["robot_stop"] = {
   },
 };
 
-Blockly.Blocks["robot_forward"] = {
+Blockly.Blocks["robot_rotate_left"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField("🤖 Robot:")
-      .appendField("Đi thẳng với tốc độ");
+      .appendField(new Blockly.FieldImage(img_rotate_left, 60, 60, "Robot"));
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -95,6 +110,103 @@ Blockly.Blocks["robot_forward"] = {
 
     this.setColour("#2CA8B8");
 
-    this.setTooltip("Robot đi thẳng");
+    this.setTooltip("Robot xoay trái");
+  },
+};
+
+Blockly.Blocks["robot_rotate_right"] = {
+  init() {
+    this.appendValueInput("POWER")
+      .setCheck("Number")
+      .appendField(new Blockly.FieldImage(img_rotate_right, 60, 60, "Robot"));
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#2CA8B8");
+
+    this.setTooltip("Robot xoay phải");
+  },
+};
+
+Blockly.Blocks["robot_turn_left"] = {
+  init() {
+    this.appendValueInput("POWER")
+      .setCheck("Number")
+      .appendField("Robot: Rẽ trái với tốc độ");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#2CA8B8");
+
+    this.setTooltip("Robot rẽ trái");
+  },
+};
+
+Blockly.Blocks["robot_rotate_left_ms"] = {
+  init() {
+    this.appendDummyInput().appendField(
+      new Blockly.FieldImage(img_turn_left, 60, 60, "Robot"),
+    );
+
+    this.appendValueInput("TIME").setCheck("Number");
+
+    this.appendDummyInput().appendField("ms");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#00ACC1");
+
+    this.setTooltip(
+      "Robot xoay trái với tốc độ 80 trong khoảng thời gian rồi dừng",
+    );
+  },
+};
+
+Blockly.Blocks["robot_rotate_right_ms"] = {
+  init() {
+    this.appendDummyInput().appendField(
+      new Blockly.FieldImage(img_turn_right, 60, 60, "Robot"),
+    );
+
+    this.appendValueInput("TIME").setCheck("Number");
+
+    this.appendDummyInput().appendField("ms");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#00ACC1");
+
+    this.setTooltip(
+      "Robot xoay phải với tốc độ 80 trong khoảng thời gian rồi dừng",
+    );
+  },
+};
+
+Blockly.Blocks["robot_delay"] = {
+  init() {
+    this.appendValueInput("TIME").setCheck("Number").appendField("Robot: Đợi");
+
+    this.appendDummyInput().appendField("ms");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#9C27B0");
+
+    this.setTooltip("Robot chờ trong khoảng thời gian");
   },
 };
