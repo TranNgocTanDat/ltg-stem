@@ -14,7 +14,6 @@ import * as Blockly from "blockly";
 //   },
 // };
 
-
 Blockly.Blocks["forever"] = {
   init() {
     this.appendDummyInput().appendField("♾ lặp mãi mãi");
@@ -22,7 +21,9 @@ Blockly.Blocks["forever"] = {
     this.appendStatementInput("HANDLER");
 
     this.setColour("#36B34D");
-    this.setDeletable(true);
-    this.setMovable(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    // this.setDeletable(true);
+    // this.setMovable(true);
   },
 };
