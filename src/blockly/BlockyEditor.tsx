@@ -515,10 +515,9 @@ export default function BlocklyEditor() {
         <div
           style={{
             position: "absolute",
-            top: "45%",
+            top: "30%",
             right: 30,
             zIndex: 10,
-            // background: "#fff",
             padding: 8,
             borderRadius: 6,
             boxShadow: "0 2px 6px rgba(0,0,0,0.2)",
