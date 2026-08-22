@@ -132,13 +132,13 @@ export default function BlocklyEditor() {
     block.moveBy(20, 200);
   };
 
-  const createDefaultForever = (workspace: Blockly.WorkspaceSvg) => {
-    if (workspace.getAllBlocks(false).some((b) => b.type === "forever")) return;
-    const block = workspace.newBlock("forever");
-    block.initSvg();
-    block.render();
-    block.moveBy(300, 200);
-  };
+  // const createDefaultForever = (workspace: Blockly.WorkspaceSvg) => {
+  //   if (workspace.getAllBlocks(false).some((b) => b.type === "forever")) return;
+  //   const block = workspace.newBlock("forever");
+  //   block.initSvg();
+  //   block.render();
+  //   block.moveBy(300, 200);
+  // };
 
   // ===== INIT WORKSPACE =====
   useEffect(() => {
@@ -398,7 +398,7 @@ export default function BlocklyEditor() {
 
     hideFlyout(workspace);
     createDefaultStart(workspace);
-    createDefaultForever(workspace);
+    // createDefaultForever(workspace);
 
     // sync projects across tabs
     const onStorage = (e: StorageEvent) => {
