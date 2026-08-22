@@ -21,7 +21,7 @@ Blockly.Blocks["forever"] = {
 
     this.appendStatementInput("HANDLER");
 
-    this.setColour(160);
+    this.setColour("#36B34D");
     this.setDeletable(true);
     this.setMovable(true);
   },

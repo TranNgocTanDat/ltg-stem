@@ -7,7 +7,7 @@ Blockly.Blocks["on_start"] = {
 
     this.appendStatementInput("DO");  
 
-    this.setColour(120);
+    this.setColour("#0A909F");
     this.setDeletable(true);
     this.setMovable(true);
   },
@@ -25,6 +25,6 @@ Blockly.Blocks["ltg_if"] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 
-    this.setColour("#4C97FF");
+    this.setColour("#36B34D");
   },
 };

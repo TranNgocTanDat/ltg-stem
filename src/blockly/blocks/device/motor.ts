@@ -18,7 +18,7 @@ Blockly.Blocks["robot_forward"] = {
     this.setNextStatement(true);
 
     this.setInputsInline(true);
-    this.setColour("#2CA8B8");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot đi thẳng");
   },
@@ -40,7 +40,7 @@ Blockly.Blocks["robot_forward_ms"] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 
-    this.setColour("#00ACC1");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot đi thẳng trong khoảng thời gian");
   },
@@ -58,7 +58,7 @@ Blockly.Blocks["robot_backward"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#2CA8B8");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot đi lùi");
   },
@@ -80,7 +80,7 @@ Blockly.Blocks["robot_backward_ms"] = {
     this.setPreviousStatement(true);
     this.setNextStatement(true);
 
-    this.setColour("#00ACC1");
+    this.setColour("#F9940C");
   },
 };
 
@@ -108,7 +108,7 @@ Blockly.Blocks["robot_rotate_left"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#2CA8B8");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot xoay trái");
   },
@@ -125,7 +125,7 @@ Blockly.Blocks["robot_rotate_right"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#2CA8B8");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot xoay phải");
   },
@@ -142,7 +142,7 @@ Blockly.Blocks["robot_turn_left"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#2CA8B8");
+    this.setColour("#F9940C");
 
     this.setTooltip("Robot rẽ trái");
   },
@@ -163,7 +163,7 @@ Blockly.Blocks["robot_rotate_left_ms"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#00ACC1");
+    this.setColour("#F9940C");
 
     this.setTooltip(
       "Robot xoay trái với tốc độ 80 trong khoảng thời gian rồi dừng",
@@ -186,7 +186,7 @@ Blockly.Blocks["robot_rotate_right_ms"] = {
 
     this.setInputsInline(true);
 
-    this.setColour("#00ACC1");
+    this.setColour("#F9940C");
 
     this.setTooltip(
       "Robot xoay phải với tốc độ 80 trong khoảng thời gian rồi dừng",
