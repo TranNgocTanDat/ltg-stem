@@ -625,7 +625,7 @@ ${indent(foreverRoutine)}
 
                 await uploader.upload(code);
 
-                alert("Upload thành công");
+                // alert("Upload thành công");
 
               } catch (err) {
                 console.error("Upload failed:", err);
