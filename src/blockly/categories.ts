@@ -21,7 +21,7 @@ export const CATEGORIES: {
 }[] = [
   {
     id: "device",
-    name: "ĐỘNG CƠ",
+    name: "Động cơ",
     color: "#E67E22",
     icon: CarFront,
     contents: [

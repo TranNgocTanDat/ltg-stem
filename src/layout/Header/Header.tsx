@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Bluetooth } from "lucide-react";
 
-import logo from "@/assets/logoltg.png";
+import logo from "@/assets/logo-GK.png";
 
 import { ble, BLE_EVENTS } from "@/bluetooth";
 import { protocol } from "@/blockly/protocol";
@@ -66,35 +66,35 @@ const Header = () => {
     ble.disconnect();
   };
 
-//   const handleUpload = async () => {
+  //   const handleUpload = async () => {
 
-//     const code = `
-// import coroutine
-// import motor
-// import uasyncio
-// import gc;gc.collect()
-// import interactive
-// import board
-// from constants import *
-// import flag
-// import usercode
+  //     const code = `
+  // import coroutine
+  // import motor
+  // import uasyncio
+  // import gc;gc.collect()
+  // import interactive
+  // import board
+  // from constants import *
+  // import flag
+  // import usercode
 
-// async def usercode_begin():
-//     await motor.rotate_left(80,3)
+  // async def usercode_begin():
+  //     await motor.rotate_left(80,3)
 
-// async def usercode_setup():
-//     flag.remove(flag.PROGRAME_ONSTART)
+  // async def usercode_setup():
+  //     flag.remove(flag.PROGRAME_ONSTART)
 
-// async def usercode_loop():
-//     pass
-// `;
+  // async def usercode_loop():
+  //     pass
+  // `;
 
-// await uploader.upload(code);
+  // await uploader.upload(code);
 
-//   };
+  //   };
 
   return (
-    <header className="w-full h-16 bg-green-100 flex items-center px-4">
+    <header className="w-full h-16 bg-[#36b34d] flex items-center px-4">
       <div className="flex justify-between w-full">
         <div className="w-1/2">
           <img

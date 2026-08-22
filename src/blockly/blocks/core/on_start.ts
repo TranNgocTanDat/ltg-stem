@@ -3,7 +3,7 @@ import * as Blockly from "blockly";
 Blockly.Blocks["on_start"] = {
   init() {
     this.appendDummyInput()
-      .appendField("Khởi động chương trình");
+      .appendField("Bắt đầu chương trình");
 
     this.appendStatementInput("DO");  
 
