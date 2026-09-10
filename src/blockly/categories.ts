@@ -4,11 +4,13 @@ import {
   ChartSpline,
   GitBranch,
   Home,
+  Lightbulb,
   List,
   Repeat,
   Sigma,
   Type,
   Variable,
+  Volume2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -19,6 +21,41 @@ export const CATEGORIES: {
   icon: LucideIcon;
   contents: FlyoutItem[];
 }[] = [
+  {
+    id: "basic",
+    name: "Cơ bản",
+    color: "#134b5f",
+    icon: Home,
+    contents: [
+      { kind: "block", type: "on_start" },
+      { kind: "block", type: "forever" },
+
+      // { kind: "sep", gap: 16 },
+      // { kind: "block", type: "text_print" },
+      {
+        kind: "block",
+        type: "robot_delay",
+        inputs: {
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1000,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "distance_sensor_read",
+      },
+      {
+        kind: "block",
+        type: "distance_sensor_detect",
+      },
+    ],
+  },
   {
     id: "device",
     name: "Động cơ",
@@ -31,6 +68,7 @@ export const CATEGORIES: {
       // { kind: "sep", gap: 16 },
 
       { kind: "label", text: "Động cơ" },
+
       {
         kind: "block",
         type: "robot_forward",
@@ -174,16 +212,196 @@ export const CATEGORIES: {
       //     },
       //   },
       // },
+    ],
+  },
+
+  {
+    id: "buzzer",
+    name: "Âm thanh",
+    color: "#F59E0B",
+    icon: Volume2,
+
+    contents: [
+      {
+        kind: "block",
+        type: "buzzer_set",
+      },
 
       {
         kind: "block",
-        type: "robot_delay",
+        type: "buzzer_set_bpm",
         inputs: {
+          BPM: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 120,
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_play_tone",
+        inputs: {
+          FREQ: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 440,
+              },
+            },
+          },
+
           TIME: {
             shadow: {
               type: "math_number",
               fields: {
-                NUM: 1000,
+                NUM: 500,
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_play_note",
+        inputs: {
+          NOTE: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 440,
+              },
+            },
+          },
+
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 500,
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_play_song",
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_play_basic",
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_play_note_",
+        inputs: {
+          SEMI: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 60,
+              },
+            },
+          },
+
+          BEAT: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1,
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "buzzer_mute",
+      },
+    ],
+  },
+  {
+    id: "led",
+    name: "Đèn LED",
+    icon: Lightbulb,
+    color: "#E91E63",
+
+    contents: [
+      {
+        kind: "block",
+        type: "led_set_all",
+
+        inputs: {
+          COLOUR: {
+            shadow: {
+              type: "colorNumberPicker",
+              fields: {
+                value: "0xff0000",
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "led_set_single",
+
+        inputs: {
+          POSITION: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 0,
+              },
+            },
+          },
+
+          COLOUR: {
+            shadow: {
+              type: "colorNumberPicker",
+              fields: {
+                value: "0xff0000",
+              },
+            },
+          },
+        },
+      },
+
+      {
+        kind: "block",
+        type: "led_off",
+      },
+
+      {
+        kind: "block",
+        type: "led_wipe",
+
+        inputs: {
+          COLOUR: {
+            shadow: {
+              type: "colorNumberPicker",
+              fields: {
+                value: "0xff0000",
+              },
+            },
+          },
+
+          SPEED: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 100,
               },
             },
           },
@@ -192,32 +410,84 @@ export const CATEGORIES: {
     ],
   },
   {
-    id: "basic",
-    name: "Cơ bản",
-    color: "#134b5f",
-    icon: Home,
-    contents: [
-      { kind: "block", type: "on_start" },
-      { kind: "block", type: "forever" },
-      { kind: "block", type: "wait_ms" },
-
-      { kind: "sep", gap: 16 },
-      { kind: "block", type: "text_print" },
-    ],
-  },
-
-  {
     id: "logic",
     name: "Logic",
     color: "#3ba1c5",
     icon: GitBranch,
     contents: [
-      { kind: "block", type: "ltg_if" },
-      { kind: "block", type: "controls_ifelse" },
-      { kind: "block", type: "logic_compare" },
-      { kind: "block", type: "logic_operation" },
-      { kind: "block", type: "logic_boolean" },
-      { kind: "block", type: "logic_negate" },
+      // IF / ELSE
+      {
+        kind: "block",
+        type: "controls_if",
+        inputs: {
+          IF0: {
+            shadow: {
+              type: "logic_boolean",
+              fields: {
+                BOOL: "TRUE",
+              },
+            },
+          },
+        },
+      },
+
+      // SO SÁNH
+      {
+        kind: "block",
+        type: "logic_compare",
+        inputs: {
+          A: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 0,
+              },
+            },
+          },
+          B: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 0,
+              },
+            },
+          },
+        },
+      },
+
+      // AND / OR
+      {
+        kind: "block",
+        type: "logic_operation",
+      },
+
+      // TRUE / FALSE
+      {
+        kind: "block",
+        type: "logic_boolean",
+      },
+
+      // NOT
+      {
+        kind: "block",
+        type: "logic_negate",
+        inputs: {
+          BOOL: {
+            shadow: {
+              type: "logic_boolean",
+              fields: {
+                BOOL: "TRUE",
+              },
+            },
+          },
+        },
+      },
+
+      // BUTTON
+      {
+        kind: "block",
+        type: "GetButtonOnboard",
+      },
     ],
   },
   {
@@ -433,8 +703,32 @@ export const CATEGORIES: {
     icon: Repeat,
     color: "#50cc74",
     contents: [
-      { kind: "block", type: "controls_repeat_ext" },
-      { kind: "block", type: "controls_whileUntil" },
+      {
+        kind: "block",
+        type: "controls_repeat_ext",
+        inputs: {
+          TIMES: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 4,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
+        type: "controls_whileUntil",
+      },
+      {
+        kind: "block",
+        type: "wait_until",
+      },
+      {
+        kind: "block",
+        type: "pxt_controls_for",
+      },
     ],
   },
   {

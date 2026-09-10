@@ -8,6 +8,7 @@ import logo from "@/assets/logo-GK.png";
 import { ble, BLE_EVENTS } from "@/bluetooth";
 import { protocol } from "@/blockly/protocol";
 // import { uploader } from "@/service/UploadService";
+import { toast } from "sonner";
 
 
 
@@ -58,7 +59,7 @@ const Header = () => {
       });
     } catch (err) {
       console.error(err);
-      alert("BLE connect failed");
+      toast.error("BLE connect failed");
     }
   };
 

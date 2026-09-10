@@ -6,6 +6,7 @@ import { AckManager } from "./AckManager";
 import { ChunkDecoder } from "@/blockly/protocol/ChunkDecoder";
 import { MessagePack } from "@/blockly/protocol/MessagePack";
 import { dispatcher } from "@/blockly/protocol/PacketDispatcher";
+import { toast } from "sonner";
 
 export class BleManager {
   private ack = new AckManager();
@@ -28,45 +29,57 @@ export class BleManager {
   }
 
   async connect() {
-    this.device = await navigator.bluetooth.requestDevice({
-      filters: this.config.filters || [],
-      optionalServices: this.config.optionalServices,
-    });
+    try {
+      this.device = await navigator.bluetooth.requestDevice({
+        filters: this.config.filters || [],
+        optionalServices: this.config.optionalServices,
+      });
 
-    this.server = await this.device.gatt!.connect();
+      this.server = await this.device.gatt!.connect();
 
-    this.service = await this.server.getPrimaryService(this.config.serviceUUID);
+      this.service = await this.server.getPrimaryService(
+        this.config.serviceUUID,
+      );
 
-    this.characteristic = await this.service.getCharacteristic(
-      this.config.characteristicUUID,
-    );
+      this.characteristic = await this.service.getCharacteristic(
+        this.config.characteristicUUID,
+      );
 
-    await this.characteristic.startNotifications();
+      await this.characteristic.startNotifications();
 
-    this.characteristic.addEventListener(
-      "characteristicvaluechanged",
-      this.handleNotify,
-    );
+      this.characteristic.addEventListener(
+        "characteristicvaluechanged",
+        this.handleNotify,
+      );
 
-    this.device.addEventListener(
-      "gattserverdisconnected",
-      this.handleDisconnect,
-    );
+      this.device.addEventListener(
+        "gattserverdisconnected",
+        this.handleDisconnect,
+      );
 
-    this.events.emit(BLE_EVENTS.CONNECTED);
+      this.events.emit(BLE_EVENTS.CONNECTED);
 
-    console.log("✅ BLE Connected");
+      console.log("✅ BLE Connected");
+
+      toast.success("Kết nối Não thành công!");
+    } catch (error) {
+      console.error("❌ BLE Connection failed:", error);
+
+      // Nếu người dùng tự đóng cửa sổ chọn Bluetooth
+      if (error instanceof DOMException && error.name === "NotFoundError") {
+        return;
+      }
+
+      toast.error("Kết nối Não thất bại");
+
+      throw error;
+    }
   }
 
   disconnect() {
     this.characteristic?.removeEventListener(
       "characteristicvaluechanged",
       this.handleNotify,
-    );
-
-    this.device?.removeEventListener(
-      "gattserverdisconnected",
-      this.handleDisconnect,
     );
 
     this.device?.gatt?.disconnect();
@@ -156,5 +169,6 @@ export class BleManager {
     this.events.emit(BLE_EVENTS.DISCONNECTED);
 
     console.log("BLE Device disconnected");
+    toast.error("Não đã ngắt kết nối");
   };
 }

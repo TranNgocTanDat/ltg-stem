@@ -82,3 +82,10 @@ pythonGenerator.forBlock["robot_delay"] = function (block) {
 
   return `await timer.wait(${time}, 3)\n`;
 };
+
+pythonGenerator.forBlock["GetButtonOnboard"] = function () {
+  return [
+    `await board.GetButtonOnboard(3)`,
+    3,
+  ];
+};

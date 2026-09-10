@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as vi from "blockly/msg/vi";
 import * as Blockly from "blockly";
+import { toast } from "sonner";
 
 import "blockly/blocks";
 import "@/blockly";
@@ -42,6 +43,8 @@ export default function BlocklyEditor() {
 
   const [openProjects, setOpenProjects] = useState(false);
 
+  const [isUploading, setIsUploading] = useState(false);
+
   // helper: safe workspace getter
   const getWorkspaceSafe = (): Blockly.WorkspaceSvg | null => {
     if (!workspaceRef.current) {
@@ -77,7 +80,7 @@ export default function BlocklyEditor() {
 
   const showFlyout = (workspace: Blockly.WorkspaceSvg) => {
     const flyout = getFlyout(workspace);
-    
+
     if (!flyout) return;
 
     if (flyout.svgGroup_) {
@@ -527,43 +530,142 @@ export default function BlocklyEditor() {
           }}
         >
           <Button
+            disabled={isUploading}
             onClick={async () => {
+              // Chặn mọi lần upload trùng
+              if (isUploading) {
+                return;
+              }
+
+              // Bắt đầu upload → khóa nút
+              setIsUploading(true);
               const ws = getWorkspaceSafe();
 
               if (!ws) {
-                alert("Workspace không tồn tại");
+                toast.error("Workspace không tồn tại");
+                setIsUploading(false);
                 return;
               }
 
               try {
-                const blocks = ws.getTopBlocks(true);
+                pythonGenerator.init(ws);
+
+                // ========================================
+                // RESET
+                // ========================================
 
                 let beginCode = "";
                 let foreverHandler = "";
                 let foreverId = "";
 
+                const distancePorts = new Set<string>();
+
                 // ========================================
-                // LẤY CODE TỪ CÁC TOP BLOCK
+                // LẤY TẤT CẢ BLOCK
+                // ========================================
+
+                const allBlocks =
+                  ws.getAllBlocks(false);
+
+                // ========================================
+                // TÌM DISTANCE SENSOR
+                // ========================================
+
+                for (const block of allBlocks) {
+                  if (
+                    block.type ===
+                    "distance_sensor_read"
+                  ) {
+                    const port =
+                      block.getFieldValue("PORT") ||
+                      "ControllerSub.PORT1";
+
+                    distancePorts.add(port);
+                  }
+                  if (
+                    block.type ===
+                    "distance_sensor_detect"
+                  ) {
+                    distancePorts.add(
+                      "ControllerSub.PORT1"
+                    );
+                  }
+                }
+
+                console.log(
+                  "========== DISTANCE PORTS =========="
+                );
+
+                console.log(
+                  Array.from(distancePorts)
+                );
+
+                // ========================================
+                // TOP BLOCKS
+                // ========================================
+
+                const blocks =
+                  ws.getTopBlocks(true);
+
+                // ========================================
+                // ON START + FOREVER
                 // ========================================
 
                 for (const block of blocks) {
+
+                  // ======================================
                   // ON START
-                  if (block.type === "on_start") {
+                  //
+                  // Workspace thực tế của bạn:
+                  // grobot_general_onstart
+                  // ======================================
+
+                  if (
+                    block.type ===
+                    "grobot_general_onstart" ||
+                    block.type === "on_start"
+                  ) {
                     beginCode =
-                      pythonGenerator.blockToCode(block) as string;
+                      pythonGenerator.blockToCode(
+                        block
+                      ) as string;
+
+                    console.log(
+                      "========== ON START CODE =========="
+                    );
+
+                    console.log(beginCode);
                   }
 
+                  // ======================================
                   // FOREVER
-                  if (block.type === "forever") {
+                  // ======================================
+
+                  if (
+                    block.type === "forever"
+                  ) {
                     foreverId = block.id;
 
                     foreverHandler =
-                      pythonGenerator.blockToCode(block) as string;
+                      pythonGenerator.blockToCode(
+                        block
+                      ) as string;
+
+                    console.log(
+                      "========== FOREVER CODE =========="
+                    );
+
+                    console.log(foreverHandler);
+
+                    console.log(
+                      "FOREVER BLOCK ID:",
+                      foreverId
+                    );
                   }
                 }
 
                 // ========================================
-                // TẠO TÊN FUNCTION FOREVER
+                // FOREVER FUNCTION NAME
                 // ========================================
 
                 const foreverFunctionName =
@@ -572,17 +674,27 @@ export default function BlocklyEditor() {
                     "_"
                   )}`;
 
+                console.log(
+                  "========== FOREVER FUNCTION NAME =========="
+                );
+
+                console.log(
+                  foreverFunctionName
+                );
+
                 // ========================================
-                // TẠO ASYNC FUNCTION
+                // FOREVER FUNCTION
                 // ========================================
 
                 const foreverFunction = `
 async def ${foreverFunctionName}():
-${indent(foreverHandler || "    pass")}
+${indent(
+                  foreverHandler || "    pass"
+                )}
 `;
 
                 // ========================================
-                // TẠO ROUTINE
+                // FOREVER ROUTINE
                 // ========================================
 
                 const foreverRoutine = `
@@ -594,11 +706,68 @@ coroutine.createRoutine(
 `;
 
                 // ========================================
-                // TẠO FINAL PYTHON CODE
+                // DISTANCE OBJECTS
+                // ========================================
+
+                let distanceObjects = "";
+                let distanceBegin = "";
+
+                for (
+                  const port of distancePorts
+                ) {
+
+                  // --------------------------------------
+                  // ControllerSub.PORT1
+                  //      ↓
+                  // PORT1
+                  //      ↓
+                  // board.PORT1
+                  // --------------------------------------
+
+                  const portName =
+                    port.split(".").pop() ||
+                    "PORT1";
+
+                  const portNumber =
+                    Number(
+                      portName.replace(
+                        "PORT",
+                        ""
+                      )
+                    ) || 1;
+
+                  const boardPort =
+                    `board.PORT${portNumber}`;
+
+                  const sensorName =
+                    `distance_sensor_${portNumber}`;
+
+                  distanceObjects +=
+                    `${sensorName} = distancesensor.DistanceSensor(${boardPort})\n`;
+
+                  distanceBegin +=
+                    `    await ${sensorName}.begin()\n`;
+                }
+
+                console.log(
+                  "========== DISTANCE OBJECTS =========="
+                );
+
+                console.log(distanceObjects);
+
+                console.log(
+                  "========== DISTANCE BEGIN =========="
+                );
+
+                console.log(distanceBegin);
+
+                // ========================================
+                // FINAL PYTHON CODE
                 // ========================================
 
                 const code = `
 import coroutine
+import pixel
 import motor
 import uasyncio
 import gc;gc.collect()
@@ -608,28 +777,100 @@ from constants import *
 import flag
 import usercode
 import timer
+import buzzer
+import distancesensor
+
+${distanceObjects}
 
 async def usercode_begin():
-${indent(beginCode || "    pass")}
+${indent(
+                  beginCode || "    pass"
+                )}
 
 ${foreverFunction}
 
 async def usercode_setup():
     flag.remove(flag.PROGRAME_ONSTART)
-${indent(foreverRoutine)}
+${distanceBegin}
+${indent(
+                  foreverRoutine
+                )}
 `;
+
+                // ========================================
+                // LOG FINAL CODE
+                // ========================================
+
+                console.log(
+                  "================================================"
+                );
+
+                console.log(
+                  "========== FINAL PYTHON CODE =========="
+                );
+
+                console.log(
+                  "================================================"
+                );
+
+                console.log(code);
+
+                console.log(
+                  "================================================"
+                );
+
+                console.log(
+                  "========== CODE LENGTH =========="
+                );
+
+                console.log(code.length);
+
+                console.log(
+                  "================================================"
+                );
 
                 // ========================================
                 // UPLOAD
                 // ========================================
 
+                console.log(
+                  "========== START UPLOAD =========="
+                );
+
                 await uploader.upload(code);
 
-                // alert("Upload thành công");
+
+                console.log(
+                  "========== UPLOAD SUCCESS =========="
+                );
+                toast.success("Nạp code thành công!");
 
               } catch (err) {
-                console.error("Upload failed:", err);
-                alert("Upload thất bại");
+
+                console.error(
+                  "========== UPLOAD FAILED =========="
+                );
+
+                console.error(err);
+
+                if (
+                  err instanceof Error &&
+                  err.message === "BLE_NOT_CONNECTED"
+                ) {
+                  toast.error("Chưa kết nối Não");
+                } else {
+                  toast.error("Nạp code thất bại");
+                }
+
+              } finally {
+
+                // Upload xong hoặc upload lỗi
+                // đều cho phép nạp lần tiếp theo
+                setIsUploading(false);
+
+                console.log(
+                  "========== READY FOR NEXT UPLOAD =========="
+                );
               }
             }}
           >
@@ -640,9 +881,11 @@ ${indent(foreverRoutine)}
             variant="destructive"
             onClick={async () => {
               try {
-                await uploader.upload("");
+                await uploader.stop();
+                toast.success("Đã dừng chương trình");
               } catch (err) {
                 console.error("Pause failed:", err);
+                toast.error("Dừng chương trình thất bại");
               }
             }}
           >
@@ -679,7 +922,7 @@ ${indent(foreverRoutine)}
               setProjects(getProjects());
             } catch (err) {
               console.error("Failed to create project", err);
-              alert("Lưu project thất bại.");
+              toast.error("Lưu project thất bại.");
             }
           }}
         >
@@ -714,7 +957,7 @@ ${indent(foreverRoutine)}
                       setProjects(getProjects());
                     } catch (err) {
                       console.error("Failed to load project", err);
-                      alert("Không thể load project — dữ liệu có thể bị hỏng.");
+                      toast.error("Không thể load project — dữ liệu có thể bị hỏng.");
                     }
                   }}
                 >
@@ -734,7 +977,7 @@ ${indent(foreverRoutine)}
               alert(code);
             } catch (err) {
               console.error("Failed to generate python code", err);
-              alert("Không thể sinh Python từ workspace.");
+              toast.error("Không thể sinh Python từ workspace.");
             }
           }}
         >

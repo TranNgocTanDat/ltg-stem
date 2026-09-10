@@ -194,19 +194,18 @@ Blockly.Blocks["robot_rotate_right_ms"] = {
   },
 };
 
-Blockly.Blocks["robot_delay"] = {
+
+
+
+Blockly.Blocks["GetButtonOnboard"] = {
   init() {
-    this.appendValueInput("TIME").setCheck("Number").appendField("Robot: Đợi");
+    this.appendDummyInput()
+      .appendField("Nút trên robot");
 
-    this.appendDummyInput().appendField("ms");
+    this.setOutput(true, "Boolean");
 
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+    this.setColour("#3BA1C5");
 
-    this.setInputsInline(true);
-
-    this.setColour("#9C27B0");
-
-    this.setTooltip("Robot chờ trong khoảng thời gian");
+    this.setTooltip("Đọc trạng thái nút trên robot");
   },
 };

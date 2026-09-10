@@ -1,16 +1,18 @@
 import * as Blockly from "blockly";
 
-Blockly.Blocks["wait_ms"] = {
+Blockly.Blocks["robot_delay"] = {
   init() {
-    this.appendValueInput("TIME")
-      .setCheck("Number")
-      .appendField("⏱ đợi");
+    this.appendValueInput("TIME").setCheck("Number").appendField("Đợi");
 
-    this.appendDummyInput()
-      .appendField("ms");
+    this.appendDummyInput().appendField("ms");
 
-    this.setColour(230);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
+
+    this.setInputsInline(true);
+
+    this.setColour("#9C27B0");
+
+    this.setTooltip("Robot chờ trong khoảng thời gian");
   },
 };

@@ -1,8 +1,13 @@
 import { protocol } from "@/blockly/protocol";
+import { ble } from "@/bluetooth";
 
 export class UploadService {
   async upload(code: string) {
     console.log("UPLOAD START");
+    // Kiểm tra Bluetooth trước khi bắt đầu nạp
+    if (!ble.isConnected()) {
+      throw new Error("BLE_NOT_CONNECTED");
+    }
 
     await this.enterUploadMode();
 
@@ -19,9 +24,19 @@ export class UploadService {
     console.log("UPLOAD DONE");
   }
 
+  async stop() {
+    console.log("STOP START");
+
+    await protocol.send({
+      event: "deinit",
+    });
+
+    console.log("STOP DONE");
+  }
+
   private async enterUploadMode() {
     const uuid = "#" + crypto.randomUUID().slice(0, 7);
-// const res = 
+    // const res =
     await protocol.request({
       uuid,
 
