@@ -31,7 +31,6 @@ class RemoveBranchField extends Blockly.Field {
 
   static fromJson(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    options: any
   ) {
     return new RemoveBranchField(
       () => {}
