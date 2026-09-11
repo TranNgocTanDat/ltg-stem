@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Bluetooth } from "lucide-react";
 
-import logo from "@/assets/logo-GK.png";
+// import logo from "@/assets/logo-GK.png";
 
 import { ble, BLE_EVENTS } from "@/bluetooth";
 import { protocol } from "@/blockly/protocol";
@@ -98,11 +98,11 @@ const Header = () => {
     <header className="w-full h-16 bg-[#36b34d] flex items-center px-4">
       <div className="flex justify-between w-full">
         <div className="w-1/2">
-          <img
+          {/* <img
             src={logo}
             alt="Logo"
             className="h-10 object-contain"
-          />
+          /> */}
         </div>
 
         <div className="w-1/2 flex justify-start">

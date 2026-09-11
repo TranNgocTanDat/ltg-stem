@@ -17,13 +17,13 @@ export default function HomeHeader() {
 
                 {/* Logo */}
                 <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8F7EA] text-[#35B84A] font-bold text-sm">
+                    {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8F7EA] text-[#35B84A] font-bold text-sm">
                         L
-                    </div>
+                    </div> */}
 
-                    <span className="text-base font-semibold tracking-wide text-[#1F2937]">
+                    {/* <span className="text-base font-semibold tracking-wide text-[#1F2937]">
                         LTG Education
-                    </span>
+                    </span> */}
                 </div>
 
                 {/* Right */}

@@ -12,9 +12,9 @@ export default function HomeFooter() {
                 justify-between
             ">
 
-                <div className="text-xs text-[#8A978D] font-mono">
+                {/* <div className="text-xs text-[#8A978D] font-mono">
                     ltg.education
-                </div>
+                </div> */}
 
                 <div className="flex gap-6 text-xs text-[#8A978D]">
 
