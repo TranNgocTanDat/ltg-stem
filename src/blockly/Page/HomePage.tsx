@@ -6,13 +6,12 @@ import {
     getProjects,
     setActiveProject,
 } from '@/blockly/projects';
+
 import HomeHeader from './components/HomeHeader';
 import HomeHero from './components/HomeHero';
 import ProjectsSection from './components/ProjectsSection';
 import CreateProjectDialog from '../CreateProjectDialog';
 import HomeFooter from './components/HomeFooter';
-
-
 
 interface Project {
     id: string;
@@ -130,24 +129,30 @@ export default function Home() {
      */
 
     return (
-        <div className="
-            h-screen
-            bg-[#FFFFFF]
-            flex
-            flex-col
-            overflow-hidden
-        ">
+        <div
+            className="
+                flex
+                h-screen
+                flex-col
+                overflow-hidden
+                bg-[#FFFFFF]
+            "
+        >
 
             {/* Header */}
             <HomeHeader />
 
             {/* Main */}
-            <main className="
-                flex-1
-                flex
-                flex-col
-                overflow-hidden
-            ">
+            <main
+                className="
+                    flex
+                    min-h-0
+                    flex-1
+                    flex-col
+                    overflow-x-hidden
+                    overflow-y-auto
+                "
+            >
 
                 {/* Hero */}
                 <HomeHero

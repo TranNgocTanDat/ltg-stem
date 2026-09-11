@@ -5,6 +5,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
 import {
     Settings,
     User,
@@ -12,50 +13,88 @@ import {
 
 export default function HomeHeader() {
     return (
-        <header className="border-b border-[#E8F3EA] bg-white h-16 flex-shrink-0">
-            <div className="flex items-center justify-between px-6 h-full">
+        <header className="h-16 flex-shrink-0 border-b border-[#E8F3EA] bg-white">
+            <div className="flex h-full items-center justify-between px-3 sm:px-4 md:px-6">
 
                 {/* Logo */}
-                <div className="flex items-center gap-3">
-                    {/* <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#E8F7EA] text-[#35B84A] font-bold text-sm">
+                <div className="flex min-w-0 items-center gap-3">
+                    {/* 
+                    <div className="
+                        flex
+                        h-8
+                        w-8
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-lg
+                        bg-[#E8F7EA]
+                        text-sm
+                        font-bold
+                        text-[#35B84A]
+                    ">
                         L
-                    </div> */}
+                    </div>
 
-                    {/* <span className="text-base font-semibold tracking-wide text-[#1F2937]">
+                    <span className="
+                        hidden
+                        truncate
+                        text-base
+                        font-semibold
+                        tracking-wide
+                        text-[#1F2937]
+                        sm:block
+                    ">
                         LTG Education
-                    </span> */}
+                    </span>
+                    */}
                 </div>
 
                 {/* Right */}
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
 
+                    {/* Settings */}
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-[#7A8A7D] hover:text-[#35B84A] hover:bg-[#F1FAF2]"
+                        className="
+                            h-8
+                            w-8
+                            shrink-0
+                            text-[#7A8A7D]
+                            hover:bg-[#F1FAF2]
+                            hover:text-[#35B84A]
+                        "
                     >
                         <Settings className="h-4 w-4" />
                     </Button>
 
+                    {/* User */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
                                 size="sm"
                                 className="
-                                    gap-2
                                     h-8
-                                    px-3
+                                    shrink-0
+                                    gap-1.5
                                     rounded-lg
+                                    border
+                                    border-[#BFE7C6]
+                                    bg-[#EAF8EC]
+                                    px-2
                                     text-xs
                                     font-medium
-                                    bg-[#EAF8EC]
                                     text-[#2FA943]
                                     hover:bg-[#DDF5E1]
-                                    border border-[#BFE7C6]
+                                    sm:px-3
                                 "
                             >
-                                <User className="h-3.5 w-3.5" />
-                                Đăng ký
+                                <User className="h-3.5 w-3.5 shrink-0" />
+
+                                {/* Chỉ hiện chữ từ sm */}
+                                <span className="hidden sm:inline">
+                                    Đăng ký
+                                </span>
                             </Button>
                         </DropdownMenuTrigger>
 

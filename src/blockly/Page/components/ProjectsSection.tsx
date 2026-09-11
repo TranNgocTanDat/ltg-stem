@@ -23,65 +23,132 @@ export default function ProjectsSection({
     onOpen,
 }: ProjectsSectionProps) {
 
-    const totalCards = projects.length + 1;
+    const totalCards =
+        projects.length + 1;
 
     return (
-        <section className="mx-[13%] max-w-6xl px-6 flex-1 overflow-hidden py-6">
+        <section
+            className="
+                mx-auto
+                w-full
+                max-w-6xl
+                flex-shrink-0
+                px-4
+                py-6
 
-            {/* Header */}
-            <div className="mb-6 flex items-center justify-between">
+                sm:px-6
 
-                <div>
-                    <h2 className="text-2xl font-bold text-[#26352A]">
+                lg:py-8
+            "
+        >
+
+            {/* ================================
+                Header
+            ================================= */}
+
+            <div
+                className="
+                    mb-6
+                    flex
+                    items-center
+                    justify-between
+                    gap-4
+                "
+            >
+
+                {/* Title */}
+                <div className="min-w-0">
+
+                    <h2
+                        className="
+                            text-xl
+                            font-bold
+                            text-[#26352A]
+
+                            sm:text-2xl
+                        "
+                    >
                         Dự Án Của Tôi
                     </h2>
 
-                    <p className="text-sm text-[#8A978D] mt-1">
+                    <p
+                        className="
+                            mt-1
+                            text-xs
+                            text-[#8A978D]
+
+                            sm:text-sm
+                        "
+                    >
                         Quản lý và mở các dự án của bạn
                     </p>
+
                 </div>
 
-                <div className="flex gap-2">
+                {/* Actions */}
+                <div
+                    className="
+                        flex
+                        shrink-0
+                        gap-2
+                    "
+                >
 
+                    {/* Import */}
                     <Button
                         variant="outline"
                         size="sm"
                         className="
-                            gap-2
                             h-9
-                            px-4
+                            gap-2
                             border-[#DDE9DF]
-                            text-[#657267]
-                            hover:text-[#35B84A]
-                            hover:bg-[#F1FAF2]
                             bg-white
+                            px-3
+                            text-[#657267]
+                            hover:bg-[#F1FAF2]
+                            hover:text-[#35B84A]
+
+                            sm:px-4
                         "
                     >
                         <Download className="h-4 w-4" />
-                        Nhập
+
+                        <span className="hidden sm:inline">
+                            Nhập
+                        </span>
                     </Button>
 
+                    {/* Create */}
                     <Button
                         size="sm"
                         onClick={onCreate}
                         className="
-                            gap-2
                             h-9
-                            px-4
+                            gap-2
                             bg-[#35B84A]
+                            px-3
                             text-white
-                            hover:bg-[#2FA943]
                             shadow-sm
+                            hover:bg-[#2FA943]
+
+                            sm:px-4
                         "
                     >
                         <Plus className="h-4 w-4" />
-                        Tạo
+
+                        <span className="hidden sm:inline">
+                            Tạo
+                        </span>
                     </Button>
 
                 </div>
+
             </div>
 
-            {/* Desktop / Tablet */}
+            {/* ================================
+                Projects
+            ================================= */}
+
             {totalCards > 4 ? (
 
                 <ProjectCarousel
@@ -92,18 +159,24 @@ export default function ProjectsSection({
 
             ) : (
 
-                <div className="
-                    grid
-                    grid-cols-1
-                    sm:grid-cols-2
-                    lg:grid-cols-4
-                    gap-4
-                ">
+                <div
+                    className="
+                        grid
+                        grid-cols-1
+                        gap-4
 
+                        sm:grid-cols-2
+
+                        lg:grid-cols-4
+                    "
+                >
+
+                    {/* New project */}
                     <NewProjectCard
                         onClick={onCreate}
                     />
 
+                    {/* Existing projects */}
                     {projects.map((project) => (
                         <ProjectCard
                             key={project.id}
