@@ -28,8 +28,23 @@ import {
   loadProject,
   getProjects,
   getActiveProjectId,
+  renameProject,
+  duplicateProject,
+  deleteProject,
+  createEmptyProject,
 } from "@/blockly/projects";
-import { ChartNoAxesGantt, Code, Pause, Play, Save } from "lucide-react";
+import {
+  ChartNoAxesGantt,
+  Code,
+  Pause,
+  Play,
+  Save,
+  Pencil,
+  Copy,
+  Trash2,
+} from "lucide-react";
+import CreateProjectDialog from "./CreateProjectDialog";
+import DeleteProjectDialog from "./DeleteProjectDialog";
 
 export default function BlocklyEditor() {
   const blocklyDiv = useRef<HTMLDivElement | null>(null);
@@ -44,6 +59,24 @@ export default function BlocklyEditor() {
   const [openProjects, setOpenProjects] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
+
+  const [editingProjectId, setEditingProjectId] =
+    useState<string | null>(null);
+
+  const [editingProjectName, setEditingProjectName] =
+    useState("");
+
+  const [createProjectOpen, setCreateProjectOpen] =
+    useState(false);
+
+  const [deleteProjectOpen, setDeleteProjectOpen] =
+    useState(false);
+
+  const [projectToDelete, setProjectToDelete] =
+    useState<{
+      id: string;
+      name: string;
+    } | null>(null);
 
   // helper: safe workspace getter
   const getWorkspaceSafe = (): Blockly.WorkspaceSvg | null => {
@@ -908,21 +941,60 @@ ${indent(
           gap: 15,
         }}
       >
-        <Button className="bg-white text-black"
+        <Button
+          className="bg-white text-black"
           onClick={() => {
-            const name = prompt("Nhập tên project:");
-            if (!name) return;
-
             const ws = getWorkspaceSafe();
-            if (!ws) return;
+
+            if (!ws) {
+              toast.error("Workspace không tồn tại");
+              return;
+            }
 
             try {
-              const p = createProject(name, ws);
-              setActiveProjectId(p.id);
+              // Đã có project → cập nhật project hiện tại
+              if (activeProjectId) {
+                updateProject(
+                  activeProjectId,
+                  ws
+                );
+
+                setProjects(getProjects());
+
+                toast.success("Đã lưu project");
+                return;
+              }
+
+              // Chưa có project → tạo project mới
+              const name = prompt("Nhập tên project mới:");
+
+              if (name === null) {
+                return;
+              }
+
+              const projectName = name.trim() || "Untitled";
+
+              const project = createProject(
+                projectName,
+                ws
+              );
+
+              setActiveProjectId(project.id);
+
               setProjects(getProjects());
+
+              toast.success(
+                `Đã tạo project "${project.name}"`
+              );
             } catch (err) {
-              console.error("Failed to create project", err);
-              toast.error("Lưu project thất bại.");
+              console.error(
+                "Save project failed:",
+                err
+              );
+
+              toast.error(
+                "Không thể lưu project"
+              );
             }
           }}
         >
@@ -933,38 +1005,254 @@ ${indent(
             <Button variant="outline"><ChartNoAxesGantt /></Button>
           </PopoverTrigger>
 
-          <PopoverContent className="w-56 p-2">
-            {projects.length === 0 && (
-              <div className="text-xs text-muted-foreground">
+          <PopoverContent className="w-80 p-2">
+            <Button
+              className="mb-2 w-full justify-start"
+              onClick={() => {
+                setCreateProjectOpen(true);
+              }}
+            >
+              + Tạo project mới
+            </Button>
+            {projects.length === 0 ? (
+              <div className="px-2 py-3 text-xs text-muted-foreground">
                 Chưa có project nào
+              </div>
+            ) : (
+              <div className="flex flex-col gap-1">
+                {projects.map((p) => {
+                  const isActive = p.id === activeProjectId;
+
+                  return (
+                    <div
+                      key={p.id}
+                      className={`flex items-center gap-1 rounded-md p-1 ${isActive
+                        ? "bg-primary/10"
+                        : "hover:bg-muted"
+                        }`}
+                    >
+                      {/* Tên project */}
+                      <Button
+                        variant="ghost"
+                        className="min-w-0 flex-1 justify-start"
+                        onClick={() => {
+                          const ws = getWorkspaceSafe();
+
+                          if (!ws) {
+                            toast.error(
+                              "Workspace không tồn tại"
+                            );
+                            return;
+                          }
+
+                          try {
+                            loadProject(p.id, ws);
+
+                            setActiveProjectId(p.id);
+                            setOpenProjects(false);
+                            setProjects(getProjects());
+
+                            toast.success(
+                              `Đã mở "${p.name}"`
+                            );
+                          } catch (err) {
+                            console.error(
+                              "Failed to load project",
+                              err
+                            );
+
+                            toast.error(
+                              "Không thể mở project."
+                            );
+                          }
+                        }}
+                      >
+                        <span className="mr-2 shrink-0">
+                          {isActive ? "✓" : "📂"}
+                        </span>
+
+                        {editingProjectId === p.id ? (
+                          <input
+                            autoFocus
+                            value={editingProjectName}
+                            onChange={(e) =>
+                              setEditingProjectName(e.target.value)
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const newName =
+                                  editingProjectName.trim();
+
+                                if (!newName) {
+                                  toast.error(
+                                    "Tên project không được để trống"
+                                  );
+                                  return;
+                                }
+
+                                try {
+                                  renameProject(
+                                    p.id,
+                                    newName
+                                  );
+
+                                  setProjects(
+                                    getProjects()
+                                  );
+
+                                  setEditingProjectId(null);
+                                  setEditingProjectName("");
+
+                                  toast.success(
+                                    "Đã đổi tên project"
+                                  );
+                                } catch (err) {
+                                  console.error(
+                                    "Rename project failed",
+                                    err
+                                  );
+
+                                  toast.error(
+                                    "Không thể đổi tên project"
+                                  );
+                                }
+                              }
+
+                              if (e.key === "Escape") {
+                                setEditingProjectId(null);
+                                setEditingProjectName("");
+                              }
+                            }}
+                            onBlur={() => {
+                              const newName =
+                                editingProjectName.trim();
+
+                              if (!newName) {
+                                setEditingProjectId(null);
+                                setEditingProjectName("");
+                                return;
+                              }
+
+                              try {
+                                renameProject(
+                                  p.id,
+                                  newName
+                                );
+
+                                setProjects(
+                                  getProjects()
+                                );
+
+                                setEditingProjectId(null);
+                                setEditingProjectName("");
+                              } catch (err) {
+                                console.error(
+                                  "Rename project failed",
+                                  err
+                                );
+
+                                toast.error(
+                                  "Không thể đổi tên project"
+                                );
+                              }
+                            }}
+                            className="h-8 min-w-0 flex-1 rounded border bg-background px-2 text-sm outline-none"
+                            onClick={(e) =>
+                              e.stopPropagation()
+                            }
+                          />
+                        ) : (
+                          <span className="truncate">
+                            {p.name}
+                          </span>
+                        )}
+                      </Button>
+
+                      {/* Đổi tên */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        title="Đổi tên"
+                        onClick={() => {
+                          setEditingProjectId(p.id);
+                          setEditingProjectName(p.name);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+
+                      {/* Nhân bản */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0"
+                        title="Nhân bản"
+                        onClick={() => {
+                          try {
+                            const copy =
+                              duplicateProject(p.id);
+
+                            const ws =
+                              getWorkspaceSafe();
+
+                            if (ws) {
+                              loadProject(
+                                copy.id,
+                                ws
+                              );
+                            }
+
+                            setActiveProjectId(
+                              copy.id
+                            );
+
+                            setProjects(
+                              getProjects()
+                            );
+
+                            setOpenProjects(false);
+
+                            toast.success(
+                              `Đã nhân bản "${p.name}"`
+                            );
+                          } catch (err) {
+                            console.error(
+                              "Duplicate project failed",
+                              err
+                            );
+
+                            toast.error(
+                              "Không thể nhân bản project"
+                            );
+                          }
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 text-destructive hover:text-destructive"
+                        title="Xóa"
+                        onClick={() => {
+                          setProjectToDelete({
+                            id: p.id,
+                            name: p.name,
+                          });
+
+                          setDeleteProjectOpen(true);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
-            <div className="flex flex-col gap-1">
-              {projects.map((p) => (
-                <Button
-                  key={p.id}
-                  variant={p.id === activeProjectId ? "default" : "secondary"}
-                  className="justify-start"
-                  onClick={() => {
-                    const ws = getWorkspaceSafe();
-                    if (!ws) return;
-
-                    try {
-                      loadProject(p.id, ws);
-                      setActiveProjectId(p.id);
-                      setOpenProjects(false); // 👈 đóng popover
-                      setProjects(getProjects());
-                    } catch (err) {
-                      console.error("Failed to load project", err);
-                      toast.error("Không thể load project — dữ liệu có thể bị hỏng.");
-                    }
-                  }}
-                >
-                  {p.name}
-                </Button>
-              ))}
-            </div>
           </PopoverContent>
         </Popover>
 
@@ -984,6 +1272,111 @@ ${indent(
           <Code />
         </Button>
       </div>
+      <CreateProjectDialog
+        open={createProjectOpen}
+        onOpenChange={setCreateProjectOpen}
+        onCreate={(name) => {
+          try {
+            const project =
+              createEmptyProject(name);
+
+            const ws = getWorkspaceSafe();
+
+            if (ws) {
+              ws.clear();
+
+              loadProject(
+                project.id,
+                ws
+              );
+            }
+
+            setActiveProjectId(
+              project.id
+            );
+
+            setProjects(
+              getProjects()
+            );
+
+            setOpenProjects(false);
+
+            toast.success(
+              `Đã tạo project "${project.name}"`
+            );
+          } catch (err) {
+            console.error(
+              "Create project failed",
+              err
+            );
+
+            toast.error(
+              "Không thể tạo project"
+            );
+          }
+        }}
+      />
+      <DeleteProjectDialog
+        open={deleteProjectOpen}
+        onOpenChange={setDeleteProjectOpen}
+        projectName={
+          projectToDelete?.name || ""
+        }
+        onConfirm={() => {
+          if (!projectToDelete) {
+            return;
+          }
+
+          try {
+            deleteProject(
+              projectToDelete.id
+            );
+
+            const updatedProjects =
+              getProjects();
+
+            setProjects(
+              updatedProjects
+            );
+
+            const newActiveId =
+              getActiveProjectId();
+
+            setActiveProjectId(
+              newActiveId
+            );
+
+            const ws =
+              getWorkspaceSafe();
+
+            if (ws) {
+              if (newActiveId) {
+                loadProject(
+                  newActiveId,
+                  ws
+                );
+              } else {
+                ws.clear();
+              }
+            }
+
+            setProjectToDelete(null);
+
+            toast.success(
+              "Đã xóa project"
+            );
+          } catch (err) {
+            console.error(
+              "Delete project failed",
+              err
+            );
+
+            toast.error(
+              "Không thể xóa project"
+            );
+          }
+        }}
+      />
     </div>
   );
 }

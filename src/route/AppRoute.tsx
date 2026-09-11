@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MasterLayout from "../layout/MasterLayout/MasterLayout";
 import BlocklyPage from "@/blockly/BlocklyPage";
-import HomeBlockPage from "@/blockly/HomeBlockPage";
+import Home from "@/blockly/Page/HomePage";
 
 const route = createBrowserRouter([
   {
     path: "/",
     element: <MasterLayout />,
     children: [
-      { path: "/", element: <HomeBlockPage /> },
+      { path: "/", element: <Home /> },
       { path: "/editor-blockly", element: <BlocklyPage /> },
 
     ],
