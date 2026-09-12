@@ -59,8 +59,16 @@ pythonGenerator.forBlock["robot_turn_left"] = function (block) {
   return `await motor.turn_left(${power}, 3)\n`;
 };
 
+// pythonGenerator.forBlock["robot_rotate_left_ms"] = function (block) {
+//   const time = pythonGenerator.valueToCode(block, "TIME", 3) || "500";
+
+//   return `await motor.rotate_left(80, 3)
+// await timer.wait(${time}, 3)
+// await motor.stop()
+// `;
+// };
 pythonGenerator.forBlock["robot_rotate_left_ms"] = function (block) {
-  const time = pythonGenerator.valueToCode(block, "TIME", 3) || "500";
+  const time = block.getFieldValue("TIME") || "500";
 
   return `await motor.rotate_left(80, 3)
 await timer.wait(${time}, 3)
@@ -68,8 +76,17 @@ await motor.stop()
 `;
 };
 
+// pythonGenerator.forBlock["robot_rotate_right_ms"] = function (block) {
+//   const time = pythonGenerator.valueToCode(block, "TIME", 3) || "500";
+
+//   return `await motor.rotate_right(80, 3)
+// await timer.wait(${time}, 3)
+// await motor.stop()
+// `;
+// };
+
 pythonGenerator.forBlock["robot_rotate_right_ms"] = function (block) {
-  const time = pythonGenerator.valueToCode(block, "TIME", 3) || "500";
+  const time = block.getFieldValue("TIME") || "500";
 
   return `await motor.rotate_right(80, 3)
 await timer.wait(${time}, 3)
@@ -84,8 +101,5 @@ pythonGenerator.forBlock["robot_delay"] = function (block) {
 };
 
 pythonGenerator.forBlock["GetButtonOnboard"] = function () {
-  return [
-    `await board.GetButtonOnboard(3)`,
-    3,
-  ];
+  return [`await board.GetButtonOnboard(3)`, 3];
 };

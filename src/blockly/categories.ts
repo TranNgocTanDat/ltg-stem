@@ -142,33 +142,41 @@ export const CATEGORIES: {
         },
       },
       { kind: "block", type: "robot_stop" },
+      // {
+      //   kind: "block",
+      //   type: "robot_rotate_left_ms",
+      //   inputs: {
+      //     TIME: {
+      //       shadow: {
+      //         type: "math_number",
+      //         fields: {
+      //           NUM: 500,
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
       {
         kind: "block",
         type: "robot_rotate_left_ms",
-        inputs: {
-          TIME: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 500,
-              },
-            },
-          },
-        },
       },
+      // {
+      //   kind: "block",
+      //   type: "robot_rotate_right_ms",
+      //   inputs: {
+      //     TIME: {
+      //       shadow: {
+      //         type: "math_number",
+      //         fields: {
+      //           NUM: 500,
+      //         },
+      //       },
+      //     },
+      //   },
+      // },
       {
         kind: "block",
         type: "robot_rotate_right_ms",
-        inputs: {
-          TIME: {
-            shadow: {
-              type: "math_number",
-              fields: {
-                NUM: 500,
-              },
-            },
-          },
-        },
       },
       {
         kind: "block",

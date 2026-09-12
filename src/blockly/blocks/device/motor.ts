@@ -6,6 +6,7 @@ import img_turn_left from "@/assets/icons/turn_left.png";
 import img_turn_right from "@/assets/icons/turn_right.png";
 import img_rotate_left from "@/assets/icons/rotate_left.png";
 import img_rotate_right from "@/assets/icons/rotate_right.png";
+import TimeStepperField from "../flieds/TimeStepperField";
 
 Blockly.Blocks["robot_forward"] = {
   init() {
@@ -101,7 +102,8 @@ Blockly.Blocks["robot_rotate_left"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField(new Blockly.FieldImage(img_rotate_left, 60, 60, "Robot"));
+      .appendField(new Blockly.FieldImage(img_rotate_left, 60, 60, "Robot"))
+      .appendField("Xoay trái với tốc độ");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -118,7 +120,8 @@ Blockly.Blocks["robot_rotate_right"] = {
   init() {
     this.appendValueInput("POWER")
       .setCheck("Number")
-      .appendField(new Blockly.FieldImage(img_rotate_right, 60, 60, "Robot"));
+      .appendField(new Blockly.FieldImage(img_rotate_right, 60, 60, "Robot"))
+      .appendField("Xoay phải với tốc độ");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -131,76 +134,94 @@ Blockly.Blocks["robot_rotate_right"] = {
   },
 };
 
-Blockly.Blocks["robot_turn_left"] = {
-  init() {
-    this.appendValueInput("POWER")
-      .setCheck("Number")
-      .appendField("Robot: Rẽ trái với tốc độ");
+// Blockly.Blocks["robot_rotate_left_ms"] = {
+//   init() {
+//     this.appendDummyInput().appendField(
+//       new Blockly.FieldImage(img_turn_left, 60, 60, "Robot"),
+//     ).appendField("Rẽ trái");
+// ;
 
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+//     this.appendValueInput("TIME").setCheck("Number");
 
-    this.setInputsInline(true);
+//     this.appendDummyInput().appendField("ms");
 
-    this.setColour("#F9940C");
+//     this.setPreviousStatement(true);
+//     this.setNextStatement(true);
 
-    this.setTooltip("Robot rẽ trái");
-  },
-};
+//     this.setInputsInline(true);
+
+//     this.setColour("#F9940C");
+
+//     this.setTooltip(
+//       "Robot xoay trái với tốc độ 80 trong khoảng thời gian rồi dừng",
+//     );
+//   },
+// };
 
 Blockly.Blocks["robot_rotate_left_ms"] = {
   init() {
-    this.appendDummyInput().appendField(
-      new Blockly.FieldImage(img_turn_left, 60, 60, "Robot"),
-    );
-
-    this.appendValueInput("TIME").setCheck("Number");
-
-    this.appendDummyInput().appendField("ms");
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldImage(img_turn_left, 60, 60, "Robot"))
+      .appendField("Rẽ trái")
+      .appendField(new TimeStepperField(500), "TIME");
 
     this.setPreviousStatement(true);
+
     this.setNextStatement(true);
 
     this.setInputsInline(true);
 
     this.setColour("#F9940C");
 
-    this.setTooltip(
-      "Robot xoay trái với tốc độ 80 trong khoảng thời gian rồi dừng",
-    );
+    this.setTooltip("Robot rẽ trái trong khoảng thời gian rồi dừng");
   },
 };
+
+// Blockly.Blocks["robot_rotate_right_ms"] = {
+//   init() {
+//     this.appendDummyInput()
+//       .appendField(new Blockly.FieldImage(img_turn_right, 60, 60, "Robot"))
+//       .appendField("Rẽ phải");
+
+//     this.appendValueInput("TIME").setCheck("Number");
+
+//     this.appendDummyInput().appendField("ms");
+
+//     this.setPreviousStatement(true);
+//     this.setNextStatement(true);
+
+//     this.setInputsInline(true);
+
+//     this.setColour("#F9940C");
+
+//     this.setTooltip(
+//       "Robot xoay phải với tốc độ 80 trong khoảng thời gian rồi dừng",
+//     );
+//   },
+// };
 
 Blockly.Blocks["robot_rotate_right_ms"] = {
   init() {
-    this.appendDummyInput().appendField(
-      new Blockly.FieldImage(img_turn_right, 60, 60, "Robot"),
-    );
-
-    this.appendValueInput("TIME").setCheck("Number");
-
-    this.appendDummyInput().appendField("ms");
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldImage(img_turn_right, 60, 60, "Robot"))
+      .appendField("Rẽ phải")
+      .appendField(new TimeStepperField(500), "TIME");
 
     this.setPreviousStatement(true);
+
     this.setNextStatement(true);
 
     this.setInputsInline(true);
 
     this.setColour("#F9940C");
 
-    this.setTooltip(
-      "Robot xoay phải với tốc độ 80 trong khoảng thời gian rồi dừng",
-    );
+    this.setTooltip("Robot rẽ phải trong khoảng thời gian rồi dừng");
   },
 };
 
-
-
-
 Blockly.Blocks["GetButtonOnboard"] = {
   init() {
-    this.appendDummyInput()
-      .appendField("Nút trên robot");
+    this.appendDummyInput().appendField("Nút trên robot");
 
     this.setOutput(true, "Boolean");
 

@@ -663,11 +663,7 @@ export default function BlocklyEditor() {
                         block
                       ) as string;
 
-                    console.log(
-                      "========== ON START CODE =========="
-                    );
-
-                    console.log(beginCode);
+                    
                   }
 
                   // ======================================
@@ -684,16 +680,7 @@ export default function BlocklyEditor() {
                         block
                       ) as string;
 
-                    console.log(
-                      "========== FOREVER CODE =========="
-                    );
-
-                    console.log(foreverHandler);
-
-                    console.log(
-                      "FOREVER BLOCK ID:",
-                      foreverId
-                    );
+                    
                   }
                 }
 
@@ -782,17 +769,9 @@ coroutine.createRoutine(
                     `    await ${sensorName}.begin()\n`;
                 }
 
-                console.log(
-                  "========== DISTANCE OBJECTS =========="
-                );
+                
 
-                console.log(distanceObjects);
-
-                console.log(
-                  "========== DISTANCE BEGIN =========="
-                );
-
-                console.log(distanceBegin);
+                
 
                 // ========================================
                 // FINAL PYTHON CODE
@@ -829,38 +808,6 @@ ${indent(
                   foreverRoutine
                 )}
 `;
-
-                // ========================================
-                // LOG FINAL CODE
-                // ========================================
-
-                console.log(
-                  "================================================"
-                );
-
-                console.log(
-                  "========== FINAL PYTHON CODE =========="
-                );
-
-                console.log(
-                  "================================================"
-                );
-
-                console.log(code);
-
-                console.log(
-                  "================================================"
-                );
-
-                console.log(
-                  "========== CODE LENGTH =========="
-                );
-
-                console.log(code.length);
-
-                console.log(
-                  "================================================"
-                );
 
                 // ========================================
                 // UPLOAD
