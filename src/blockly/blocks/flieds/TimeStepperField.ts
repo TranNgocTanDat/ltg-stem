@@ -38,13 +38,13 @@ class TimeStepperField extends Blockly.Field<string> {
   private plusText_?: SVGTextElement;
 
   private valueText_?: SVGTextElement;
+    minusEventData_: Blockly.browserEvents.Data | undefined;
+    plusEventData_: Blockly.browserEvents.Data | undefined;
 
   /**
    * Event data của Blockly
    */
-  private minusEventData_: Blockly.browserEvents.Data | null = null;
 
-  private plusEventData_: Blockly.browserEvents.Data | null = null;
 
   constructor(value: number = DEFAULT_TIME) {
     const normalized = TimeStepperField.normalize_(value);
