@@ -1,4 +1,3 @@
-
 import * as Blockly from "blockly";
 
 /**
@@ -41,9 +40,8 @@ class SpeedStepperField extends Blockly.Field<string> {
   private plusText_?: SVGTextElement;
 
   private valueText_?: SVGTextElement;
-
-  private minusEventData_?: Blockly.browserEvents.Data;
-  private plusEventData_?: Blockly.browserEvents.Data;
+  minusEventData_: Blockly.browserEvents.Data | undefined;
+  plusEventData_: Blockly.browserEvents.Data | undefined;
 
   constructor(value: number = DEFAULT_SPEED) {
     const normalized = SpeedStepperField.normalize_(value);
@@ -225,25 +223,15 @@ class SpeedStepperField extends Blockly.Field<string> {
         },
       );
 
-      Blockly.browserEvents.bind(
-        this.minusGroup_,
-        "mouseenter",
-        this,
-        () => {
-          if (this.speedValue_ > MIN_SPEED) {
-            this.minusRect_?.setAttribute("fill", "#dddddd");
-          }
-        },
-      );
+      Blockly.browserEvents.bind(this.minusGroup_, "mouseenter", this, () => {
+        if (this.speedValue_ > MIN_SPEED) {
+          this.minusRect_?.setAttribute("fill", "#dddddd");
+        }
+      });
 
-      Blockly.browserEvents.bind(
-        this.minusGroup_,
-        "mouseleave",
-        this,
-        () => {
-          this.updateStepperUI_();
-        },
-      );
+      Blockly.browserEvents.bind(this.minusGroup_, "mouseleave", this, () => {
+        this.updateStepperUI_();
+      });
     }
 
     // Nút tăng tốc độ.
@@ -260,25 +248,15 @@ class SpeedStepperField extends Blockly.Field<string> {
         },
       );
 
-      Blockly.browserEvents.bind(
-        this.plusGroup_,
-        "mouseenter",
-        this,
-        () => {
-          if (this.speedValue_ < MAX_SPEED) {
-            this.plusRect_?.setAttribute("fill", "#dddddd");
-          }
-        },
-      );
+      Blockly.browserEvents.bind(this.plusGroup_, "mouseenter", this, () => {
+        if (this.speedValue_ < MAX_SPEED) {
+          this.plusRect_?.setAttribute("fill", "#dddddd");
+        }
+      });
 
-      Blockly.browserEvents.bind(
-        this.plusGroup_,
-        "mouseleave",
-        this,
-        () => {
-          this.updateStepperUI_();
-        },
-      );
+      Blockly.browserEvents.bind(this.plusGroup_, "mouseleave", this, () => {
+        this.updateStepperUI_();
+      });
     }
   }
 
@@ -289,9 +267,7 @@ class SpeedStepperField extends Blockly.Field<string> {
    */
 
   private changeSpeed_(amount: number) {
-    const newValue = SpeedStepperField.normalize_(
-      this.speedValue_ + amount,
-    );
+    const newValue = SpeedStepperField.normalize_(this.speedValue_ + amount);
 
     if (newValue === this.speedValue_) {
       return;
@@ -351,19 +327,14 @@ class SpeedStepperField extends Blockly.Field<string> {
     }
 
     if (this.minusGroup_) {
-      this.minusGroup_.style.cursor = minusDisabled
-        ? "default"
-        : "pointer";
+      this.minusGroup_.style.cursor = minusDisabled ? "default" : "pointer";
     }
 
     // Nút tăng.
     const plusDisabled = this.speedValue_ >= MAX_SPEED;
 
     if (this.plusRect_) {
-      this.plusRect_.setAttribute(
-        "fill",
-        plusDisabled ? "#f5f5f5" : "#eeeeee",
-      );
+      this.plusRect_.setAttribute("fill", plusDisabled ? "#f5f5f5" : "#eeeeee");
 
       this.plusRect_.setAttribute(
         "stroke",
@@ -372,16 +343,11 @@ class SpeedStepperField extends Blockly.Field<string> {
     }
 
     if (this.plusText_) {
-      this.plusText_.setAttribute(
-        "fill",
-        plusDisabled ? "#bbbbbb" : "#333333",
-      );
+      this.plusText_.setAttribute("fill", plusDisabled ? "#bbbbbb" : "#333333");
     }
 
     if (this.plusGroup_) {
-      this.plusGroup_.style.cursor = plusDisabled
-        ? "default"
-        : "pointer";
+      this.plusGroup_.style.cursor = plusDisabled ? "default" : "pointer";
     }
   }
 
