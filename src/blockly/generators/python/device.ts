@@ -136,7 +136,7 @@ pythonGenerator.forBlock["robot_motor_both"] = function (block) {
   return (
     `await motor.set_power(0, ${power1}, 3)\n` +
     `await motor.set_power(1, ${power2}, 3)\n` +
-    `await timer.wait((${timeMs}) * 1000, 3)\n` +
+    `await timer.wait(${timeMs}, 3)\n` +
     `await motor.stop()\n`
   );
 };
