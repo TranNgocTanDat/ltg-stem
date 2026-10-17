@@ -54,6 +54,20 @@ export const CATEGORIES: {
         kind: "block",
         type: "distance_sensor_detect",
       },
+      {
+        kind: "block",
+        type: "servo_set_angle",
+        inputs: {
+          ANGLE: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 90,
+              },
+            },
+          },
+        },
+      },
     ],
   },
   {
@@ -220,6 +234,46 @@ export const CATEGORIES: {
       //     },
       //   },
       // },
+      // {
+      //   kind: "block",
+      //   type: "robot_motor_1",
+      //   inputs: {
+      //     POWER: {
+      //       shadow: {
+      //         type: "math_number",
+      //         fields: { NUM: 80 },
+      //       },
+      //     },
+      //   },
+      // },
+
+      // {
+      //   kind: "block",
+      //   type: "robot_motor_2",
+      //   inputs: {
+      //     POWER: {
+      //       shadow: {
+      //         type: "math_number",
+      //         fields: { NUM: 80 },
+      //       },
+      //     },
+      //   },
+      // },
+
+      {
+        kind: "block",
+        type: "robot_motor_both",
+        inputs: {
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1,
+              },
+            },
+          },
+        },
+      },
     ],
   },
 

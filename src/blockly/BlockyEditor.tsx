@@ -592,6 +592,7 @@ export default function BlocklyEditor() {
                 let foreverId = "";
 
                 const distancePorts = new Set<string>();
+                const servoPorts = new Set<string>();
 
                 // ========================================
                 // LẤY TẤT CẢ BLOCK
@@ -599,6 +600,15 @@ export default function BlocklyEditor() {
 
                 const allBlocks =
                   ws.getAllBlocks(false);
+
+                for (const block of allBlocks) {
+                  if (block.type === "servo_set_angle") {
+                    const port =
+                      block.getFieldValue("PORT") || "ControllerSub.PORT1";
+
+                    servoPorts.add(port);
+                  }
+                }
 
                 // ========================================
                 // TÌM DISTANCE SENSOR
@@ -663,7 +673,7 @@ export default function BlocklyEditor() {
                         block
                       ) as string;
 
-                    
+
                   }
 
                   // ======================================
@@ -680,7 +690,7 @@ export default function BlocklyEditor() {
                         block
                       ) as string;
 
-                    
+
                   }
                 }
 
@@ -732,6 +742,24 @@ coroutine.createRoutine(
                 let distanceObjects = "";
                 let distanceBegin = "";
 
+                let servoObjects = "";
+                let servoBegin = "";
+
+                for (const port of servoPorts) {
+                  const portName = port.split(".").pop() || "PORT1";
+                  const portNumber =
+                    Number(portName.replace("PORT", "")) || 1;
+
+                  const boardPort = `board.PORT${portNumber}`;
+                  const servoName = `servo_${portNumber}`;
+
+                  servoObjects +=
+                    `${servoName} = servo.Servo(${boardPort})\n`;
+
+                  servoBegin +=
+                    `    await ${servoName}.begin()\n`;
+                }
+
                 for (
                   const port of distancePorts
                 ) {
@@ -769,9 +797,9 @@ coroutine.createRoutine(
                     `    await ${sensorName}.begin()\n`;
                 }
 
-                
 
-                
+
+
 
                 // ========================================
                 // FINAL PYTHON CODE
@@ -791,8 +819,13 @@ import usercode
 import timer
 import buzzer
 import distancesensor
+import servo
 
+# Các đối tượng cảm biến khoảng cách
 ${distanceObjects}
+
+# Các đối tượng servo
+${servoObjects}
 
 async def usercode_begin():
 ${indent(
@@ -804,6 +837,7 @@ ${foreverFunction}
 async def usercode_setup():
     flag.remove(flag.PROGRAME_ONSTART)
 ${distanceBegin}
+${servoBegin}
 ${indent(
                   foreverRoutine
                 )}

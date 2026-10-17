@@ -19,4 +19,5 @@ import "./blocks/device/led";
 import "./blocks/core/control_if";
 import "./blocks/core/logic";
 import "./blocks/device/distance_sensor";
+import "./blocks/device/servoBlocks";
 

@@ -103,3 +103,41 @@ pythonGenerator.forBlock["robot_delay"] = function (block) {
 pythonGenerator.forBlock["GetButtonOnboard"] = function () {
   return [`await board.GetButtonOnboard(3)`, 3];
 };
+
+
+// Động cơ 1
+pythonGenerator.forBlock["robot_motor_1"] = function (block) {
+  const power =
+    pythonGenerator.valueToCode(block, "POWER", 3) || "80";
+
+  return `await motor.set_power(0, ${power}, 3)\n`;
+};
+
+// Động cơ 2
+pythonGenerator.forBlock["robot_motor_2"] = function (block) {
+  const power =
+    pythonGenerator.valueToCode(block, "POWER", 3) || "80";
+
+  return `await motor.set_power(1, ${power}, 3)\n`;
+};
+
+// Điều khiển cả hai động cơ
+
+pythonGenerator.forBlock["robot_motor_both"] = function (block) {
+  const power1 = block.getFieldValue("POWER1") || "80";
+  const power2 = block.getFieldValue("POWER2") || "80";
+
+  const time = pythonGenerator.valueToCode(block, "TIME", 3) || "1";
+
+  // Frontend: giây → milliseconds
+  const timeMs = `(${time} * 1000)`;
+
+
+  return (
+    `await motor.set_power(0, ${power1}, 3)\n` +
+    `await motor.set_power(1, ${power2}, 3)\n` +
+    `await timer.wait((${timeMs}) * 1000, 3)\n` +
+    `await motor.stop()\n`
+  );
+};
+

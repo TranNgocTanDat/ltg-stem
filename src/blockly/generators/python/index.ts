@@ -7,3 +7,4 @@ import "./led";
 import "./control_if";
 import "./logic";
 import "./distance";
+import "./servoGenerators";

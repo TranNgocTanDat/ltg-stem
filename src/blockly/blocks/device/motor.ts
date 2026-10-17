@@ -7,6 +7,7 @@ import img_turn_right from "@/assets/icons/turn_right.png";
 import img_rotate_left from "@/assets/icons/rotate_left.png";
 import img_rotate_right from "@/assets/icons/rotate_right.png";
 import TimeStepperField from "../flieds/TimeStepperField";
+import SpeedStepperField from "../flieds/SpeedStepperField";
 
 Blockly.Blocks["robot_forward"] = {
   init() {
@@ -228,5 +229,62 @@ Blockly.Blocks["GetButtonOnboard"] = {
     this.setColour("#3BA1C5");
 
     this.setTooltip("Đọc trạng thái nút trên robot");
+  },
+};
+
+// Động cơ 1
+Blockly.Blocks["robot_motor_1"] = {
+  init() {
+    this.appendValueInput("POWER")
+      .setCheck("Number")
+      .appendField("Động cơ 1 chạy với tốc độ");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setInputsInline(true);
+    this.setColour("#E67E22");
+
+    this.setTooltip("Điều khiển tốc độ động cơ 1");
+  },
+};
+
+// Động cơ 2
+Blockly.Blocks["robot_motor_2"] = {
+  init() {
+    this.appendValueInput("POWER")
+      .setCheck("Number")
+      .appendField("Động cơ 2 chạy với tốc độ");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setInputsInline(true);
+    this.setColour("#E67E22");
+
+    this.setTooltip("Điều khiển tốc độ động cơ 2");
+  },
+};
+
+// Điều khiển cả hai động c
+
+Blockly.Blocks["robot_motor_both"] = {
+  init() {
+    this.appendDummyInput()
+      .appendField("Động cơ 1")
+      .appendField(new SpeedStepperField(80), "POWER1")
+      .appendField("Động cơ 2")
+      .appendField(new SpeedStepperField(80), "POWER2");
+
+    this.appendValueInput("TIME")
+      .setCheck("Number")
+      .appendField("trong");
+
+    this.appendDummyInput().appendField("giây ");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour("#E67E22");
+    this.setTooltip(
+      "Điều chỉnh tốc độ hai động cơ, chạy theo thời gian rồi tự dừng",
+    );
   },
 };
