@@ -12,7 +12,6 @@ import { toast } from 'sonner'
 import {
   apiErrorMessage,
   lmsApi,
-  questionImageUrl,
   resultOf,
 } from '@/lib/lms-api'
 import { useAuth } from '@/lib/auth'
@@ -24,6 +23,7 @@ import type {
   StudentQuizView,
 } from '@/lib/lms-types'
 import {
+  AuthenticatedImage,
   EmptyState,
   ErrorBox,
   formatDateTime,
@@ -44,19 +44,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type Phase = 'intro' | 'taking' | 'review'
-
-function QuestionImage({ src, alt }: { src: string | null; alt: string }) {
-  const [failed, setFailed] = useState(false)
-  if (!src || failed) return null
-  return (
-    <img
-      src={questionImageUrl(src)}
-      alt={alt}
-      onError={() => setFailed(true)}
-      className="mt-3 max-h-72 w-auto max-w-full rounded-md border object-contain"
-    />
-  )
-}
 
 export default function QuizTakePage() {
   const { id } = useParams<{ id: string }>()
@@ -285,7 +272,11 @@ export default function QuizTakePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <QuestionImage src={ans.imagePath} alt={`Câu ${idx + 1}`} />
+                <AuthenticatedImage
+                  imagePath={ans.imagePath}
+                  alt={`Câu ${idx + 1}`}
+                  className="mt-3 max-h-72 w-auto max-w-full rounded-md border object-contain"
+                />
                 {ans.options.map((opt) => {
                   const wasSelected = ans.selectedOptionIds.includes(opt.id)
                   const isCorrect = ans.correctOptionIds.includes(opt.id)
@@ -383,9 +374,10 @@ export default function QuizTakePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <QuestionImage
-                  src={q.question.imagePath}
+                <AuthenticatedImage
+                  imagePath={q.question.imagePath}
                   alt={`Câu ${idx + 1}`}
+                  className="mt-3 max-h-72 w-auto max-w-full rounded-md border object-contain"
                 />
                 <div className="mt-3">
                   {renderOptions(

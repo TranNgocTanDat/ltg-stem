@@ -12,12 +12,12 @@ import { toast } from 'sonner'
 import {
   apiErrorMessage,
   lmsApi,
-  questionImageUrl,
   resultOf,
 } from '@/lib/lms-api'
 import type { Page, Question, QuestionType } from '@/lib/lms-types'
 import { QUESTION_TYPE_LABEL } from '@/lib/lms-types'
 import {
+  AuthenticatedImage,
   EmptyState,
   ErrorBox,
   FieldError,
@@ -79,7 +79,6 @@ export default function AdminQuestionsPage() {
   const [form, setForm] = useState<QuestionForm>(EMPTY_FORM)
   const [formError, setFormError] = useState('')
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
-  const [imageError, setImageError] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
 
   const params = new URLSearchParams({ size: '100', sort: 'createdAt,desc' })
@@ -168,7 +167,6 @@ export default function AdminQuestionsPage() {
     onSuccess: (data) => {
       toast.success('Đã tải ảnh minh họa lên')
       if (data) setEditing(data)
-      setImageError(false)
       invalidate()
     },
     onError: (e) => toast.error(apiErrorMessage(e)),
@@ -210,7 +208,6 @@ export default function AdminQuestionsPage() {
     setEditing(null)
     setForm(EMPTY_FORM)
     setFormError('')
-    setImageError(false)
     setDialogOpen(true)
   }
 
@@ -227,7 +224,6 @@ export default function AdminQuestionsPage() {
       })),
     })
     setFormError('')
-    setImageError(false)
     setDialogOpen(true)
   }
 
@@ -494,18 +490,15 @@ export default function AdminQuestionsPage() {
             {editing && (
               <div className="space-y-2">
                 <Label>Ảnh minh họa</Label>
-                {editing.imagePath && !imageError ? (
-                  <img
-                    src={questionImageUrl(editing.imagePath)}
+                {editing.imagePath ? (
+                  <AuthenticatedImage
+                    imagePath={editing.imagePath}
                     alt="Ảnh minh họa câu hỏi"
-                    onError={() => setImageError(true)}
                     className="max-h-48 w-auto max-w-full rounded-md border object-contain"
                   />
                 ) : (
                   <p className="text-xs text-muted-foreground">
-                    {editing.imagePath
-                      ? 'Không xem trước được ảnh (backend chưa có endpoint phục vụ ảnh câu hỏi).'
-                      : 'Chưa có ảnh minh họa.'}
+                    Chưa có ảnh minh họa.
                   </p>
                 )}
                 <input

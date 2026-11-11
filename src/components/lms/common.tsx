@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { AlertCircle, Inbox } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { fetchImageBlobUrl } from '@/lib/lms-api'
 
 export function formatDateTime(iso: string | null | undefined): string {
   if (!iso) return '—'
@@ -93,4 +95,48 @@ export function ListSkeleton({ rows = 3 }: { rows?: number }) {
 export function FieldError({ message }: { message?: string }) {
   if (!message) return null
   return <p className="mt-1 text-xs text-destructive">{message}</p>
+}
+
+/**
+ * Ảnh tải qua API kèm token đăng nhập (dùng cho ảnh minh họa câu hỏi).
+ * Tự ẩn khi tải lỗi; thu hồi object URL khi unmount hoặc đổi ảnh.
+ */
+export function AuthenticatedImage({
+  imagePath,
+  alt,
+  className,
+}: {
+  imagePath: string | null | undefined
+  alt: string
+  className?: string
+}) {
+  const [url, setUrl] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    if (!imagePath) return
+    let alive = true
+    let objectUrl: string | null = null
+    setFailed(false)
+    setUrl(null)
+    fetchImageBlobUrl(imagePath)
+      .then((u) => {
+        if (!alive) {
+          URL.revokeObjectURL(u)
+          return
+        }
+        objectUrl = u
+        setUrl(u)
+      })
+      .catch(() => {
+        if (alive) setFailed(true)
+      })
+    return () => {
+      alive = false
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [imagePath])
+
+  if (!imagePath || failed || !url) return null
+  return <img src={url} alt={alt} className={className} />
 }

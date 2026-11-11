@@ -97,12 +97,15 @@ lmsApi.interceptors.response.use(
 export const fileUrl = (storedName: string) => `${baseURL}/files/${storedName}`
 
 /**
- * URL ảnh minh họa câu hỏi.
- * LƯU Ý: backend hiện chưa có endpoint phục vụ ảnh câu hỏi (chỉ có /files cho
- * tài liệu bài giảng), nên ảnh có thể không hiển thị — giao diện tự ẩn khi tải lỗi.
+ * Tải ảnh minh họa câu hỏi qua axios (kèm token đăng nhập) rồi trả về object URL.
+ * Ảnh không dùng <img src> trực tiếp được vì /files yêu cầu Bearer token.
  */
-export const questionImageUrl = (imagePath: string) =>
-  `${baseURL}/files/${imagePath}`
+export async function fetchImageBlobUrl(imagePath: string): Promise<string> {
+  const res = await lmsApi.get(`/files/${imagePath}`, {
+    responseType: 'blob',
+  })
+  return URL.createObjectURL(res.data as Blob)
+}
 
 /** Tải file qua axios (kèm token) rồi trả về object URL để xem/tải xuống. */
 export async function fetchFileBlobUrl(storedName: string): Promise<string> {
