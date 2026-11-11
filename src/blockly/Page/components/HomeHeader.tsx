@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -7,6 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import {
+    GraduationCap,
     Settings,
     User,
 } from 'lucide-react';
@@ -51,6 +53,34 @@ export default function HomeHeader() {
 
                 {/* Right */}
                 <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
+
+                    {/* Vào LMS */}
+                    <Button
+                        asChild
+                        size="sm"
+                        className="
+                            h-8
+                            shrink-0
+                            gap-1.5
+                            rounded-lg
+                            border
+                            border-[#BFE7C6]
+                            bg-[#EAF8EC]
+                            px-2
+                            text-xs
+                            font-medium
+                            text-[#2FA943]
+                            hover:bg-[#DDF5E1]
+                            sm:px-3
+                        "
+                    >
+                        <Link to="/lms/dashboard">
+                            <GraduationCap className="h-3.5 w-3.5 shrink-0" />
+                            <span className="hidden sm:inline">
+                                Vào LMS
+                            </span>
+                        </Link>
+                    </Button>
 
                     {/* Settings */}
                     <Button

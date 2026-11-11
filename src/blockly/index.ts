@@ -20,4 +20,5 @@ import "./blocks/core/control_if";
 import "./blocks/core/logic";
 import "./blocks/device/distance_sensor";
 import "./blocks/device/servoBlocks";
+import "./blocks/device/line_sensor";
 

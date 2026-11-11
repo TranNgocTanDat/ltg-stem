@@ -593,6 +593,7 @@ export default function BlocklyEditor() {
 
                 const distancePorts = new Set<string>();
                 const servoPorts = new Set<string>();
+                const lineSensorPorts = new Set<string>();
 
                 // ========================================
                 // LẤY TẤT CẢ BLOCK
@@ -634,6 +635,31 @@ export default function BlocklyEditor() {
                     );
                   }
                 }
+
+                // ========================================
+                // TÌM LINE SENSOR
+                // ========================================
+
+                for (const block of allBlocks) {
+                  if (
+                    block.type === "line_sensor_read" ||
+                    block.type === "line_sensor_check"
+                  ) {
+                    const port =
+                      block.getFieldValue("PORT") ||
+                      "ControllerSub.PORT1";
+
+                    lineSensorPorts.add(port);
+                  }
+                }
+
+                console.log(
+                  "========== LINE SENSOR PORTS =========="
+                );
+
+                console.log(
+                  Array.from(lineSensorPorts)
+                );
 
                 console.log(
                   "========== DISTANCE PORTS =========="
@@ -797,6 +823,28 @@ coroutine.createRoutine(
                     `    await ${sensorName}.begin()\n`;
                 }
 
+                // ========================================
+                // LINE SENSOR OBJECTS
+                // ========================================
+
+                let lineSensorObjects = "";
+                let lineSensorBegin = "";
+
+                for (const port of lineSensorPorts) {
+                  const portName = port.split(".").pop() || "PORT1";
+                  const portNumber =
+                    Number(portName.replace("PORT", "")) || 1;
+
+                  const boardPort = `board.PORT${portNumber}`;
+                  const sensorName = `line_sensor_${portNumber}`;
+
+                  lineSensorObjects +=
+                    `${sensorName} = line_sensor.LineSensor(${boardPort})\n`;
+
+                  lineSensorBegin +=
+                    `    await ${sensorName}.begin()\n`;
+                }
+
 
 
 
@@ -820,12 +868,16 @@ import timer
 import buzzer
 import distancesensor
 import servo
+import line_sensor
 
 # Các đối tượng cảm biến khoảng cách
 ${distanceObjects}
 
 # Các đối tượng servo
 ${servoObjects}
+
+# Các đối tượng cảm biến dò line
+${lineSensorObjects}
 
 async def usercode_begin():
 ${indent(
@@ -838,6 +890,7 @@ async def usercode_setup():
     flag.remove(flag.PROGRAME_ONSTART)
 ${distanceBegin}
 ${servoBegin}
+${lineSensorBegin}
 ${indent(
                   foreverRoutine
                 )}

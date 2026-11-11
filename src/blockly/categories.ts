@@ -56,6 +56,14 @@ export const CATEGORIES: {
       },
       {
         kind: "block",
+        type: "line_sensor_read",
+      },
+      {
+        kind: "block",
+        type: "line_sensor_check",
+      },
+      {
+        kind: "block",
         type: "servo_set_angle",
         inputs: {
           ANGLE: {
