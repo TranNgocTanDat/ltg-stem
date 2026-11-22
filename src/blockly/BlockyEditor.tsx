@@ -188,6 +188,13 @@ export default function BlocklyEditor() {
       theme: makeCodeTheme,
       trashcan: true,
       toolbox: EMPTY_TOOLBOX,
+      // Blockly mặc định lấy sprites.png (icon nút zoom + thùng rác) từ
+      // server demo của Google (blockly-demo.appspot.com) — server này đã
+      // trả 404 cho sprites.png nên các nút zoom hiện ảnh lỗi. Trỏ sang
+      // file media của đúng gói blockly đang cài (jsdelivr, CDN của npm).
+      // Số version PHẢI khớp blockly trong package.json (hiện 12.3.1),
+      // vì vị trí các icon trong sprites.png có thể đổi theo version.
+      media: "https://cdn.jsdelivr.net/npm/blockly@12.3.1/media/",
       move: {
         scrollbars: true,
         drag: true,
