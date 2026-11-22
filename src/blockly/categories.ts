@@ -129,6 +129,36 @@ export const CATEGORIES: {
       },
       {
         kind: "block",
+        type: "robot_forward_lr_ms",
+        inputs: {
+          LEFT: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          RIGHT: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 80,
+              },
+            },
+          },
+          TIME: {
+            shadow: {
+              type: "math_number",
+              fields: {
+                NUM: 1,
+              },
+            },
+          },
+        },
+      },
+      {
+        kind: "block",
         type: "robot_backward",
         inputs: {
           POWER: {

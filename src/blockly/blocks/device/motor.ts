@@ -48,6 +48,35 @@ Blockly.Blocks["robot_forward_ms"] = {
   },
 };
 
+// Đi thẳng với tốc độ riêng cho động cơ trái / phải, trong thời gian rồi tự dừng
+// Lưu ý: nhà cung cấp không ghi động cơ 0 là trái hay phải — tạm map
+// trái = set_power(0, ...), phải = set_power(1, ...), cần thử trên mạch thật.
+Blockly.Blocks["robot_forward_lr_ms"] = {
+  init() {
+    this.appendValueInput("LEFT")
+      .setCheck("Number")
+      .appendField(new Blockly.FieldImage(img_forward, 60, 60, "Robot"))
+      .appendField("Đi thẳng — trái");
+
+    this.appendValueInput("RIGHT").setCheck("Number").appendField("phải");
+
+    this.appendDummyInput().appendField("trong");
+
+    this.appendValueInput("TIME").setCheck("Number");
+
+    this.appendDummyInput().appendField("giây");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setColour("#F9940C");
+
+    this.setTooltip(
+      "Đi thẳng với tốc độ riêng cho động cơ trái và phải, trong khoảng thời gian rồi tự dừng",
+    );
+  },
+};
+
 Blockly.Blocks["robot_backward"] = {
   init() {
     this.appendValueInput("POWER")

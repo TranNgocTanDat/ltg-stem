@@ -20,6 +20,27 @@ pythonGenerator.forBlock["robot_forward_ms"] = function (block) {
   return `await motor.forward(${power}, ${timeMs}, 2)\n`;
 };
 
+// Đi thẳng, tốc độ riêng cho động cơ trái / phải, trong thời gian rồi tự dừng.
+// Mẫu theo robot_motor_both của nhà cung cấp (set_power 2 động cơ + chờ + dừng).
+// rid = 2 theo họ block _ms (đi thẳng / đi lùi có thời gian).
+// Trái = motor 0, phải = motor 1: CHƯA kiểm chứng trên mạch thật.
+pythonGenerator.forBlock["robot_forward_lr_ms"] = function (block) {
+  const left = pythonGenerator.valueToCode(block, "LEFT", 3) || "80";
+  const right = pythonGenerator.valueToCode(block, "RIGHT", 3) || "80";
+
+  const time = pythonGenerator.valueToCode(block, "TIME", 3) || "1";
+
+  // Frontend: giây → milliseconds
+  const timeMs = `(${time} * 1000)`;
+
+  return (
+    `await motor.set_power(0, ${left}, 2)\n` +
+    `await motor.set_power(1, ${right}, 2)\n` +
+    `await timer.wait(${timeMs}, 2)\n` +
+    `await motor.stop()\n`
+  );
+};
+
 pythonGenerator.forBlock["robot_backward"] = function (block) {
   const power = pythonGenerator.valueToCode(block, "POWER", 3) || "0";
 
