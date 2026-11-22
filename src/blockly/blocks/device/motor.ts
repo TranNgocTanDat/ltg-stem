@@ -53,18 +53,21 @@ Blockly.Blocks["robot_forward_ms"] = {
 // trái = set_power(0, ...), phải = set_power(1, ...), cần thử trên mạch thật.
 Blockly.Blocks["robot_forward_lr_ms"] = {
   init() {
-    this.appendValueInput("LEFT")
-      .setCheck("Number")
+    // QUY TẮC LAYOUT của Blockly (getInputsInline mặc định): 2 input
+    // Dummy liên tiếp nhau => block bị render dọc, mỗi input 1 hàng.
+    // Vì vậy phải dồn ảnh + cả 2 stepper vào CÙNG 1 dummy input, rồi
+    // TIME (value, kèm nhãn "trong") và "giây" (dummy) — giống hệt
+    // robot_motor_both — thì block mới nằm gọn 1 hàng.
+    this.appendDummyInput()
       .appendField(new Blockly.FieldImage(img_forward, 60, 60, "Robot"))
-      .appendField("Đi thẳng — trái");
+      .appendField("Đi thẳng — trái")
+      .appendField(new SpeedStepperField(80), "LEFT")
+      .appendField("phải")
+      .appendField(new SpeedStepperField(80), "RIGHT");
 
-    this.appendValueInput("RIGHT").setCheck("Number").appendField("phải");
+    this.appendValueInput("TIME").setCheck("Number").appendField("trong");
 
-    this.appendDummyInput().appendField("trong");
-
-    this.appendValueInput("TIME").setCheck("Number");
-
-    this.appendDummyInput().appendField("giây");
+    this.appendDummyInput().appendField("giây ");
 
     this.setPreviousStatement(true);
     this.setNextStatement(true);
