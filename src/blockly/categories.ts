@@ -143,6 +143,10 @@ export const CATEGORIES: {
       },
       {
         kind: "block",
+        type: "robot_forward_lr",
+      },
+      {
+        kind: "block",
         type: "robot_backward",
         inputs: {
           POWER: {

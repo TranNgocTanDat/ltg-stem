@@ -42,6 +42,20 @@ pythonGenerator.forBlock["robot_forward_lr_ms"] = function (block) {
   );
 };
 
+// Bản không thời gian: chỉ set tốc độ 2 động cơ rồi chạy liên tục,
+// không chờ, không tự dừng — dùng chung với lệnh Dừng (robot_stop).
+// rid = 3 theo họ block set_power không thời gian (robot_motor_both).
+// Trái = motor 0, phải = motor 1: CHƯA kiểm chứng trên mạch thật.
+pythonGenerator.forBlock["robot_forward_lr"] = function (block) {
+  const left = block.getFieldValue("LEFT") || "80";
+  const right = block.getFieldValue("RIGHT") || "80";
+
+  return (
+    `await motor.set_power(0, ${left}, 3)\n` +
+    `await motor.set_power(1, ${right}, 3)\n`
+  );
+};
+
 pythonGenerator.forBlock["robot_backward"] = function (block) {
   const power = pythonGenerator.valueToCode(block, "POWER", 3) || "0";
 

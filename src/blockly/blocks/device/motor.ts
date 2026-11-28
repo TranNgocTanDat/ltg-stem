@@ -80,6 +80,29 @@ Blockly.Blocks["robot_forward_lr_ms"] = {
   },
 };
 
+Blockly.Blocks["robot_forward_lr"] = {
+  init() {
+    // Bản không thời gian của robot_forward_lr_ms: chỉ set tốc độ 2
+    // động cơ rồi chạy liên tục cho tới khi gặp lệnh Dừng (robot_stop).
+    // Chỉ có 1 dummy input nên block nằm gọn 1 hàng.
+    this.appendDummyInput()
+      .appendField(new Blockly.FieldImage(img_forward, 60, 60, "Robot"))
+      .appendField("Đi thẳng — trái")
+      .appendField(new SpeedStepperField(80), "LEFT")
+      .appendField("phải")
+      .appendField(new SpeedStepperField(80), "RIGHT");
+
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+
+    this.setColour("#F9940C");
+
+    this.setTooltip(
+      "Đi thẳng với tốc độ riêng cho động cơ trái và phải, chạy liên tục cho tới khi gặp lệnh Dừng",
+    );
+  },
+};
+
 Blockly.Blocks["robot_backward"] = {
   init() {
     this.appendValueInput("POWER")
